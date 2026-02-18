@@ -26,6 +26,7 @@ export default function DrinksScreen({ onNavigateToSpecials, onNavigateToFood }:
   const [isFilterModalOpen, setIsFilterModalOpen] = useState(false);
   const [isCategoriesModalOpen, setIsCategoriesModalOpen] = useState(false);
   const [selectedDrink, setSelectedDrink] = useState<DrinkItem | null>(null);
+  const [activeFilters, setActiveFilters] = useState(0);
 
   const drinks: DrinkItem[] = [
     {
@@ -85,7 +86,7 @@ export default function DrinksScreen({ onNavigateToSpecials, onNavigateToFood }:
       <FilterModal 
         isOpen={isFilterModalOpen} 
         onClose={() => setIsFilterModalOpen(false)} 
-        onApply={(count) => console.log('Applied filters:', count)}
+        onApply={(count) => setActiveFilters(count)}
         type="drinks"
       />
 
@@ -181,13 +182,17 @@ export default function DrinksScreen({ onNavigateToSpecials, onNavigateToFood }:
               placeholder="Search items..."
               className="w-full bg-[#0f2830] text-white pl-12 pr-12 py-3 rounded-xl placeholder-gray-400 focus:outline-none border border-transparent focus:border-[#c17a4a]/50 cursor-pointer"
             />
-            <SlidersHorizontal 
-              onClick={(e) => {
+            <div className="absolute right-4 top-3 cursor-pointer" onClick={(e) => {
                 e.stopPropagation();
                 setIsFilterModalOpen(true);
-              }}
-              className="absolute right-4 top-3 w-5 h-5 text-[#c17a4a] cursor-pointer" 
-            />
+            }}>
+                <SlidersHorizontal className={`w-5 h-5 ${activeFilters > 0 ? "text-[#b06d30]" : "text-[#c17a4a]"}`} />
+                {activeFilters > 0 && (
+                    <span className="absolute -top-2 -right-2 bg-[#b06d30] text-white text-[10px] font-bold w-4 h-4 rounded-full flex items-center justify-center border border-[#1a3a47]">
+                        {activeFilters}
+                    </span>
+                )}
+            </div>
           </div>
 
           {/* Items Grid */}
@@ -218,13 +223,25 @@ export default function DrinksScreen({ onNavigateToSpecials, onNavigateToFood }:
           </div>
         </div>
 
-        <button 
-          onClick={() => setIsCategoriesModalOpen(true)}
-          className="fixed bottom-6 right-6 bg-[#c17a4a] text-white rounded-full p-4 shadow-lg flex items-center gap-2 pr-6 z-50"
-        >
-          <UtensilsCrossed className="w-6 h-6" />
-          <span className="font-semibold">Menu</span>
-        </button>
+        {/* Floating Actions */}
+        <div className="fixed bottom-6 right-6 flex flex-col items-end gap-3 z-50">
+          {activeFilters > 0 && (
+            <button 
+              onClick={() => setActiveFilters(0)}
+              className="bg-[#b06d30]/90 backdrop-blur-sm text-white rounded-full px-6 py-3 shadow-lg font-semibold text-sm animate-fadeIn"
+            >
+              Clear filters
+            </button>
+          )}
+
+          <button 
+            onClick={() => setIsCategoriesModalOpen(true)}
+            className="bg-[#c17a4a] text-white rounded-full p-4 shadow-lg flex items-center gap-2 pr-6"
+          >
+            <UtensilsCrossed className="w-6 h-6" />
+            <span className="font-semibold">Menu</span>
+          </button>
+        </div>
       </div>
     </div>
   );

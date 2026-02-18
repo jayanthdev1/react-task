@@ -16,6 +16,7 @@ const FilterModal = ({ isOpen, onClose, onApply, type = 'food' }: FilterModalPro
   const [selectedAllergies, setSelectedAllergies] = useState<string[]>([]);
   const [selectedDiet, setSelectedDiet] = useState<string[]>([]);
   const [selectedPreferences, setSelectedPreferences] = useState<string[]>([]);
+  const [selectedOccasion, setSelectedOccasion] = useState<string | null>(null);
 
   const categories = type === 'food' 
     ? ['Price', 'Prep time', 'Allergies', 'Diet & preparation']
@@ -36,7 +37,8 @@ const FilterModal = ({ isOpen, onClose, onApply, type = 'food' }: FilterModalPro
     let count = 0;
     if (priceRange[0] !== 0 || priceRange[1] !== 2000) count++;
     if (sortOrder) count++;
-    if (selectedPrepTime) count++;
+    if (selectedPrepTime) count++; // Acts as Serving Type for drinks
+    if (selectedOccasion) count++;
     count += selectedAllergies.length;
     count += selectedDiet.length;
     count += selectedPreferences.length;
@@ -229,7 +231,7 @@ const FilterModal = ({ isOpen, onClose, onApply, type = 'food' }: FilterModalPro
                         <input
                           type="radio"
                           name="servingType"
-                          // For now using selectedPrepTime state as a placeholder or add new state
+                          // For now using selectedPrepTime state as a placeholder
                           checked={selectedPrepTime === type} 
                           onChange={() => setSelectedPrepTime(type)}
                           className="w-5 h-6 text-[#b06d30] border-gray-300 focus:ring-[#b06d30] accent-[#b06d30]"
@@ -247,8 +249,8 @@ const FilterModal = ({ isOpen, onClose, onApply, type = 'food' }: FilterModalPro
                         <input
                           type="radio"
                           name="occasion"
-                          // Placeholder state usage
-                          defaultChecked={false}
+                          checked={selectedOccasion === occasion}
+                          onChange={() => setSelectedOccasion(occasion)}
                           className="w-5 h-5 text-[#b06d30] border-gray-300 focus:ring-[#b06d30] accent-[#b06d30]"
                         />
                       </label>
@@ -267,6 +269,7 @@ const FilterModal = ({ isOpen, onClose, onApply, type = 'food' }: FilterModalPro
               setPriceRange([0, 2000]);
               setSortOrder(null);
               setSelectedPrepTime(null);
+              setSelectedOccasion(null);
               setSelectedAllergies([]);
               setSelectedDiet([]);
               setSelectedPreferences([]);
