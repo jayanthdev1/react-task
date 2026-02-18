@@ -116,9 +116,9 @@ export default function MenuScreen({ onNavigateToSpecials }: MenuScreenProps) {
       <div className="max-w-md mx-auto relative min-h-screen">
         {/* Header */}
         <div className="flex justify-center pt-6 pb-4">
-          <div className="bg-white px-3 py-1 rounded-md shadow-md">
-            <span className="text-[#0088cc] text-xl font-extrabold tracking-tighter italic">CSAT</span>
-          </div>
+          <div className="flex justify-center py-6">
+          <img src="/logo.png" alt="CSAT" className="h-12" />
+        </div>
         </div>
 
         <div className="px-4 space-y-6">
