@@ -5,6 +5,7 @@ interface MenuCategoriesModalProps {
   isOpen: boolean;
   onClose: () => void;
   onCategorySelect?: (category: string) => void;
+  type?: 'food' | 'drinks';
 }
 
 const categories = [
@@ -20,7 +21,18 @@ const categories = [
   { name: 'Pizza', image: 'https://images.pexels.com/photos/315755/pexels-photo-315755.jpeg?auto=compress&cs=tinysrgb&w=300' },
 ];
 
-export default function MenuCategoriesModal({ isOpen, onClose, onCategorySelect }: MenuCategoriesModalProps) {
+const drinkCategories = [
+  { name: 'Cocktails', image: 'https://images.pexels.com/photos/1189257/pexels-photo-1189257.jpeg?auto=compress&cs=tinysrgb&w=300' },
+  { name: 'Brewed drinks', image: 'https://images.pexels.com/photos/302899/pexels-photo-302899.jpeg?auto=compress&cs=tinysrgb&w=300' },
+  { name: 'Wine', image: 'https://images.pexels.com/photos/2912108/pexels-photo-2912108.jpeg?auto=compress&cs=tinysrgb&w=300' },
+  { name: 'Hard liquor', image: 'https://images.pexels.com/photos/602750/pexels-photo-602750.jpeg?auto=compress&cs=tinysrgb&w=300' },
+  { name: 'Beer', image: 'https://images.pexels.com/photos/5537949/pexels-photo-5537949.jpeg?auto=compress&cs=tinysrgb&w=300' },
+  { name: 'Shots', image: 'https://images.pexels.com/photos/4109939/pexels-photo-4109939.jpeg?auto=compress&cs=tinysrgb&w=300' },
+  { name: 'Aperitifs', image: 'https://images.pexels.com/photos/338713/pexels-photo-338713.jpeg?auto=compress&cs=tinysrgb&w=300' },
+];
+
+export default function MenuCategoriesModal({ isOpen, onClose, onCategorySelect, type = 'food' }: MenuCategoriesModalProps) {
+  const displayCategories = type === 'food' ? categories : drinkCategories;
   useEffect(() => {
     if (isOpen) {
       document.body.style.overflow = 'hidden';
@@ -40,7 +52,7 @@ export default function MenuCategoriesModal({ isOpen, onClose, onCategorySelect 
         
         {/* Header */}
         <div className="flex items-center justify-between p-6 pb-2">
-          <h2 className="text-2xl font-serif text-[#1a3a47]">Menu categories</h2>
+          <h2 className="text-2xl font-serif text-[#1a3a47]">{type === 'food' ? 'Menu categories' : 'Drink categories'}</h2>
           <button 
             onClick={onClose}
             className="w-8 h-8 flex items-center justify-center rounded-full hover:bg-gray-200 transition-colors"
@@ -51,7 +63,7 @@ export default function MenuCategoriesModal({ isOpen, onClose, onCategorySelect 
 
         {/* Grid */}
         <div className="p-6 grid grid-cols-2 gap-4">
-          {categories.map((cat, idx) => (
+          {displayCategories.map((cat, idx) => (
             <div 
               key={idx}
               onClick={() => onCategorySelect && onCategorySelect(cat.name)}

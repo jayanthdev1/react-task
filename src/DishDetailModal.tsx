@@ -1,6 +1,12 @@
 import { X, Clock, BookOpen, Plus, Utensils, ChefHat } from 'lucide-react';
 import { useEffect } from 'react';
 
+interface Addon {
+  name: string;
+  price: number;
+  image: string;
+}
+
 interface Dish {
   name: string;
   image: string;
@@ -9,6 +15,8 @@ interface Dish {
   description?: string;
   isVeg?: boolean;
   calories?: string;
+  ingredients?: string[];
+  addons?: Addon[];
 }
 
 interface DishDetailModalProps {
@@ -31,14 +39,14 @@ const DishDetailModal = ({ isOpen, onClose, dish }: DishDetailModalProps) => {
 
   if (!isOpen) return null;
 
-  // Mock data for the specific "Galouti Kebab" look, or generic fallback
-  const addons = [
+  // Use dish data or generic fallback
+  const addons = dish.addons || [
     { name: "Cut Onions", price: 5, image: "https://images.pexels.com/photos/144206/pexels-photo-144206.jpeg?auto=compress&cs=tinysrgb&w=100" },
     { name: "Lemon wedges", price: 5, image: "https://images.pexels.com/photos/1414110/pexels-photo-1414110.jpeg?auto=compress&cs=tinysrgb&w=100" },
     { name: "Mint dip", price: 5, image: "https://images.pexels.com/photos/4061502/pexels-photo-4061502.jpeg?auto=compress&cs=tinysrgb&w=100" }
   ];
 
-  const ingredients = [
+  const ingredients = dish.ingredients || [
     "Minced lamb meat",
     "Raw papaya paste",
     "Kebab chinni",

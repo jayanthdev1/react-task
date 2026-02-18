@@ -1,24 +1,113 @@
 import { useState } from 'react';
 import { Search, SlidersHorizontal, UtensilsCrossed } from 'lucide-react';
 import SearchOverlay from './SearchOverlay';
+import FilterModal from './FilterModal';
+import MenuCategoriesModal from './MenuCategoriesModal';
+import DishDetailModal from './DishDetailModal';
 
 interface DrinksScreenProps {
   onNavigateToSpecials: () => void;
   onNavigateToFood: () => void;
 }
 
+interface DrinkItem {
+  name: string;
+  image: string;
+  price: number;
+  time: string;
+  description: string;
+  ingredients: string[];
+  addons: { name: string; price: number; image: string }[];
+  isVeg: boolean;
+}
+
 export default function DrinksScreen({ onNavigateToSpecials, onNavigateToFood }: DrinksScreenProps) {
   const [isSearchActive, setIsSearchActive] = useState(false);
+  const [isFilterModalOpen, setIsFilterModalOpen] = useState(false);
+  const [isCategoriesModalOpen, setIsCategoriesModalOpen] = useState(false);
+  const [selectedDrink, setSelectedDrink] = useState<DrinkItem | null>(null);
+
+  const drinks: DrinkItem[] = [
+    {
+      name: "Pina colada",
+      image: "https://images.pexels.com/photos/109275/pexels-photo-109275.jpeg?auto=compress&cs=tinysrgb&w=400",
+      price: 250,
+      time: "5-10 mins",
+      description: "A tropical blend of white rum, rich cream of coconut, and tangy pineapple juice, blended with ice for a smooth, refreshing escape.",
+      ingredients: ["White rum", "Coconut cream", "Pineapple juice", "Ice"],
+      addons: [
+        { name: "Extra coconut cream", price: 5, image: "https://images.pexels.com/photos/109275/pexels-photo-109275.jpeg?auto=compress&cs=tinysrgb&w=100" },
+        { name: "Fresh pineapple wedge", price: 5, image: "https://images.pexels.com/photos/1109062/pexels-photo-1109062.jpeg?auto=compress&cs=tinysrgb&w=100" },
+        { name: "Maraschino cherry", price: 5, image: "https://images.pexels.com/photos/209594/pexels-photo-209594.jpeg?auto=compress&cs=tinysrgb&w=100" }
+      ],
+      isVeg: true
+    },
+    {
+      name: "Moscow mule",
+      image: "https://images.pexels.com/photos/1109062/pexels-photo-1109062.jpeg?auto=compress&cs=tinysrgb&w=400",
+      price: 250,
+      time: "5-10 mins",
+      description: "A spicy, zesty buck cocktail made with vodka, spicy ginger beer, and lime juice, garnished with a slice or wedge of lime.",
+      ingredients: ["Vodka", "Ginger beer", "Lime juice", "Ice"],
+      addons: [],
+      isVeg: true
+    },
+    {
+      name: "Cosmopolitan",
+      image: "https://images.pexels.com/photos/209594/pexels-photo-209594.jpeg?auto=compress&cs=tinysrgb&w=400",
+      price: 250,
+      time: "5-10 mins",
+      description: "A chic cocktail made with vodka, triple sec, cranberry juice, and freshly squeezed or sweetened lime juice.",
+      ingredients: ["Vodka", "Triple sec", "Cranberry juice", "Lime juice"],
+      addons: [],
+      isVeg: true
+    },
+    {
+      name: "Margarita",
+      image: "https://images.pexels.com/photos/605408/pexels-photo-605408.jpeg?auto=compress&cs=tinysrgb&w=400",
+      price: 250,
+      time: "5-10 mins",
+      description: "A timeless cocktail consisting of tequila, orange liqueur, and lime juice often served with salt on the rim of the glass.",
+      ingredients: ["Tequila", "Orange liqueur", "Lime juice", "Salt"],
+      addons: [],
+      isVeg: true
+    }
+  ];
 
   return (
-    <div className="min-h-screen bg-[#1a3a47] text-white pb-20">
+    <div className="min-h-screen bg-[#1a3a47] text-white pb-20 font-sans">
       <SearchOverlay 
         isOpen={isSearchActive} 
         onClose={() => setIsSearchActive(false)} 
         onSearch={(text) => console.log('Searching for:', text)}
       />
 
-      <div className="max-w-md mx-auto">
+      <FilterModal 
+        isOpen={isFilterModalOpen} 
+        onClose={() => setIsFilterModalOpen(false)} 
+        onApply={(count) => console.log('Applied filters:', count)}
+        type="drinks"
+      />
+
+      <MenuCategoriesModal 
+        isOpen={isCategoriesModalOpen} 
+        onClose={() => setIsCategoriesModalOpen(false)} 
+        onCategorySelect={(category) => {
+          console.log('Selected category:', category);
+          setIsCategoriesModalOpen(false);
+        }}
+        type="drinks"
+      />
+
+      {selectedDrink && (
+        <DishDetailModal 
+          isOpen={!!selectedDrink} 
+          onClose={() => setSelectedDrink(null)} 
+          dish={selectedDrink} 
+        />
+      )}
+
+      <div className="max-w-md mx-auto relative min-h-screen">
         <div className="flex justify-center py-6">
           <img src="/logo.png" alt="CSAT" className="h-12" />
         </div>
@@ -39,7 +128,10 @@ export default function DrinksScreen({ onNavigateToSpecials, onNavigateToFood }:
               </div>
               <p className="font-semibold text-gray-400">Food</p>
             </div>
-            <div className="bg-[#c17a4a] rounded-xl p-4 text-center transform scale-105 shadow-lg z-10">
+            <div 
+              onClick={() => setIsCategoriesModalOpen(true)}
+              className="bg-[#c17a4a] rounded-xl p-4 text-center transform scale-105 shadow-lg z-10 cursor-pointer"
+            >
               <div className="w-16 h-16 mx-auto mb-2 rounded-full overflow-hidden border-2 border-white/20">
                 <img
                   src="https://images.pexels.com/photos/338713/pexels-photo-338713.jpeg?auto=compress&cs=tinysrgb&w=200"
@@ -89,106 +181,47 @@ export default function DrinksScreen({ onNavigateToSpecials, onNavigateToFood }:
               placeholder="Search items..."
               className="w-full bg-[#0f2830] text-white pl-12 pr-12 py-3 rounded-xl placeholder-gray-400 focus:outline-none border border-transparent focus:border-[#c17a4a]/50 cursor-pointer"
             />
-            <SlidersHorizontal className="absolute right-4 top-3 w-5 h-5 text-[#c17a4a]" />
+            <SlidersHorizontal 
+              onClick={(e) => {
+                e.stopPropagation();
+                setIsFilterModalOpen(true);
+              }}
+              className="absolute right-4 top-3 w-5 h-5 text-[#c17a4a] cursor-pointer" 
+            />
           </div>
 
           {/* Items Grid */}
           <div className="grid grid-cols-2 gap-4">
-            {/* Item 1 */}
-            <div className="bg-[#0f2830] rounded-xl overflow-hidden">
-              <div className="relative">
-                <img
-                  src="https://images.pexels.com/photos/109275/pexels-photo-109275.jpeg?auto=compress&cs=tinysrgb&w=400"
-                  alt="Pina colada"
-                  className="w-full h-40 object-cover"
-                />
-                <span className="absolute bottom-2 left-2 bg-[#b06d30] text-white text-[10px] uppercase font-bold px-2 py-1 rounded">
-                  Signature
-                </span>
-              </div>
-              <div className="p-3">
-                <h3 className="font-serif text-lg leading-tight mb-1">Pina colada</h3>
-                <div className="mb-2">
-                  <span className="text-white font-bold text-sm">₹250</span>
+            {drinks.map((drink, idx) => (
+              <div key={idx} className="bg-[#0f2830] rounded-xl overflow-hidden cursor-pointer" onClick={() => setSelectedDrink(drink)}>
+                <div className="relative">
+                  <img
+                    src={drink.image}
+                    alt={drink.name}
+                    className="w-full h-40 object-cover"
+                  />
+                  <span className="absolute bottom-2 left-2 bg-[#b06d30] text-white text-[10px] uppercase font-bold px-2 py-1 rounded">
+                    Signature
+                  </span>
                 </div>
-                <p className="text-xs text-gray-400 leading-relaxed">
-                  Rum, coconut cream, and pineapple.
-                </p>
-              </div>
-            </div>
-
-            {/* Item 2 */}
-            <div className="bg-[#0f2830] rounded-xl overflow-hidden">
-              <div className="relative">
-                <img
-                  src="https://images.pexels.com/photos/1109062/pexels-photo-1109062.jpeg?auto=compress&cs=tinysrgb&w=400"
-                  alt="Moscow mule"
-                  className="w-full h-40 object-cover"
-                />
-                <span className="absolute bottom-2 left-2 bg-[#b06d30] text-white text-[10px] uppercase font-bold px-2 py-1 rounded">
-                  Signature
-                </span>
-              </div>
-              <div className="p-3">
-                <h3 className="font-serif text-lg leading-tight mb-1">Moscow mule</h3>
-                <div className="mb-2">
-                  <span className="text-white font-bold text-sm">₹250</span>
+                <div className="p-3">
+                  <h3 className="font-serif text-lg leading-tight mb-1">{drink.name}</h3>
+                  <div className="mb-2">
+                    <span className="text-white font-bold text-sm">₹{drink.price}</span>
+                  </div>
+                  <p className="text-xs text-gray-400 leading-relaxed line-clamp-2">
+                    {drink.description}
+                  </p>
                 </div>
-                <p className="text-xs text-gray-400 leading-relaxed">
-                  Rum, coconut cream, and pineapple.
-                </p>
               </div>
-            </div>
-
-            {/* Item 3 */}
-            <div className="bg-[#0f2830] rounded-xl overflow-hidden">
-              <div className="relative">
-                <img
-                  src="https://images.pexels.com/photos/209594/pexels-photo-209594.jpeg?auto=compress&cs=tinysrgb&w=400"
-                  alt="Cosmopolitan"
-                  className="w-full h-40 object-cover"
-                />
-                <span className="absolute bottom-2 left-2 bg-[#b06d30] text-white text-[10px] uppercase font-bold px-2 py-1 rounded">
-                  Signature
-                </span>
-              </div>
-              <div className="p-3">
-                <h3 className="font-serif text-lg leading-tight mb-1">Cosmopolitan</h3>
-                <div className="mb-2">
-                  <span className="text-white font-bold text-sm">₹250</span>
-                </div>
-                <p className="text-xs text-gray-400 leading-relaxed">
-                  Rum, coconut cream, and pineapple.
-                </p>
-              </div>
-            </div>
-
-            {/* Item 4 */}
-            <div className="bg-[#0f2830] rounded-xl overflow-hidden">
-              <div className="relative">
-                <img
-                  src="https://images.pexels.com/photos/605408/pexels-photo-605408.jpeg?auto=compress&cs=tinysrgb&w=400"
-                  alt="Margarita"
-                  className="w-full h-40 object-cover"
-                />
-                <span className="absolute bottom-2 left-2 bg-[#b06d30] text-white text-[10px] uppercase font-bold px-2 py-1 rounded">
-                  Signature
-                </span>
-              </div>
-              <div className="p-3">
-                <h3 className="font-serif text-lg leading-tight mb-1">Margarita</h3>
-                <div className="mb-2">
-                  <span className="text-white font-bold text-sm">₹250</span>
-                </div>
-                <p className="text-xs text-gray-400 leading-relaxed">
-                  Rum, coconut cream, and pineapple.
-                </p>
-              </div>
-            </div>
+            ))}
           </div>
         </div>
 
-        <button className="fixed bottom-6 right-6 bg-[#c17a4a] text-white rounded-full p-4 shadow-lg flex items-center gap-2 pr-6 z-50">
+        <button 
+          onClick={() => setIsCategoriesModalOpen(true)}
+          className="fixed bottom-6 right-6 bg-[#c17a4a] text-white rounded-full p-4 shadow-lg flex items-center gap-2 pr-6 z-50"
+        >
           <UtensilsCrossed className="w-6 h-6" />
           <span className="font-semibold">Menu</span>
         </button>
