@@ -7,6 +7,7 @@ import SearchOverlay from './SearchOverlay';
 
 interface MenuScreenProps {
   onNavigateToSpecials: () => void;
+  onNavigateToDrinks: () => void;
 }
 
 interface Dish {
@@ -59,7 +60,7 @@ const sampleDishes: Dish[] = [
   }
 ];
 
-export default function MenuScreen({ onNavigateToSpecials }: MenuScreenProps) {
+export default function MenuScreen({ onNavigateToSpecials, onNavigateToDrinks }: MenuScreenProps) {
   const [activeTab, setActiveTab] = useState('offers');
   const [selectedDish, setSelectedDish] = useState<Dish | null>(null);
   const [isMenuModalOpen, setIsMenuModalOpen] = useState(false);
@@ -137,7 +138,10 @@ export default function MenuScreen({ onNavigateToSpecials }: MenuScreenProps) {
             </div>
             
             {/* Drinks - Inactive Style */}
-            <div className="bg-[#2c3e50] rounded-xl p-3 text-center opacity-90 hover:opacity-100 transition-opacity cursor-pointer">
+            <div 
+              onClick={onNavigateToDrinks}
+              className="bg-[#2c3e50] rounded-xl p-3 text-center opacity-90 hover:opacity-100 transition-opacity cursor-pointer"
+            >
               <div className="w-16 h-16 mx-auto mb-2 rounded-full overflow-hidden bg-gray-700">
                 <img
                   src="https://images.pexels.com/photos/338713/pexels-photo-338713.jpeg?auto=compress&cs=tinysrgb&w=300"
