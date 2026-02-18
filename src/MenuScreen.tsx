@@ -344,20 +344,6 @@ export default function MenuScreen({ onNavigateToSpecials, onNavigateToDrinks }:
                            alt="Burger" 
                            className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
                          />
-                         
-                         {/* Mini overlay image for +1 */}
-                         <div className="absolute right-0 bottom-0 w-2/3 h-2/3 shadow-2xl skew-y-0 transform translate-y-2 translate-x-2">
-                            <img 
-                              src="https://images.pexels.com/photos/4051287/pexels-photo-4051287.jpeg?auto=compress&cs=tinysrgb&w=400" 
-                              alt="Mojito" 
-                              className="w-full h-full object-cover rounded-tl-xl border-l-2 border-t-2 border-white/20"
-                            />
-                         </div>
-
-                         {/* Plus Icon centered between images approx */}
-                         <div className="absolute right-1/4 bottom-1/4 bg-white/20 backdrop-blur-md rounded-full p-1 z-10 border border-white/40 shadow-lg">
-                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" className="text-white"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
-                         </div>
                        </div>
                        
                        <div>
@@ -384,19 +370,6 @@ export default function MenuScreen({ onNavigateToSpecials, onNavigateToDrinks }:
                            alt="Biryani" 
                            className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
                          />
-                          {/* Mini overlay image for +1 */}
-                         <div className="absolute right-0 bottom-0 w-2/3 h-2/3 shadow-2xl skew-y-0 transform translate-y-2 translate-x-2">
-                            <img 
-                              src="https://images.pexels.com/photos/262945/pexels-photo-262945.jpeg?auto=compress&cs=tinysrgb&w=400" 
-                              alt="Chicken 65" 
-                              className="w-full h-full object-cover rounded-tl-xl border-l-2 border-t-2 border-white/20"
-                            />
-                         </div>
-                         
-                          {/* Plus Icon */}
-                         <div className="absolute right-1/4 bottom-1/4 bg-white/20 backdrop-blur-md rounded-full p-1 z-10 border border-white/40 shadow-lg">
-                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" className="text-white"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
-                         </div>
                        </div>
                        <div>
                          <h3 className="text-white font-serif text-base leading-tight mb-1 group-hover:text-[#cd853f] transition-colors">Biryani Power Treat</h3>

@@ -45,16 +45,16 @@ export default function SpecialsScreen({ onNavigateToMenu }) {
       <h3 style={{ fontSize: '24px', fontWeight: '800', margin: '0 0 10px' }}>2-for-1 Special</h3>
       <p style={{ fontSize: '14px', color: '#b0c8d0', lineHeight: 1.6, margin: 0 }}>Choose for any two starters and pay for only one. The perfect way to begin your feast.</p>
     </div>
-    <div style={{ width: '110px', height: '110px', borderRadius: '50%', overflow: 'hidden', flexShrink: 0, border: '3px solid rgba(255,255,255,0.25)', boxShadow: '0 0 0 1px rgba(255,255,255,0.1)' }}>
-      <img src="https://images.pexels.com/photos/1199957/pexels-photo-1199957.jpeg?auto=compress&cs=tinysrgb&w=300" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
-    </div>
+    {/* <div style={{ width: '110px', height: '110px', borderRadius: '50%', overflow: 'hidden', flexShrink: 0, border: '3px solid rgba(255,255,255,0.25)', boxShadow: '0 0 0 1px rgba(255,255,255,0.1)' }}> */}
+      <img src="/food.png"  />
+    {/* </div> */}
   </div>
 
   {/* Special 2 */}
   <div style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
-    <div style={{ width: '110px', height: '110px', borderRadius: '50%', overflow: 'hidden', flexShrink: 0, border: '3px solid rgba(255,255,255,0.25)', boxShadow: '0 0 0 1px rgba(255,255,255,0.1)' }}>
-      <img src="https://images.pexels.com/photos/1283219/pexels-photo-1283219.jpeg?auto=compress&cs=tinysrgb&w=300" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
-    </div>
+    {/* <div style={{ width: '110px', height: '110px', borderRadius: '50%', overflow: 'hidden', flexShrink: 0, border: '3px solid rgba(255,255,255,0.25)', boxShadow: '0 0 0 1px rgba(255,255,255,0.1)' }}> */}
+      <img src="/drinks.png"  />
+    {/* </div> */}
     <div style={{ flex: 1 }}>
       <h3 style={{ fontSize: '24px', fontWeight: '800', margin: '0 0 10px' }}>Buy 1, get 1 special</h3>
       <p style={{ fontSize: '14px', color: '#b0c8d0', lineHeight: 1.6, margin: 0 }}>Buy a cocktail of above ₹350, and get another cocktails for absolutely free.</p>
@@ -67,9 +67,9 @@ export default function SpecialsScreen({ onNavigateToMenu }) {
       <h3 style={{ fontSize: '24px', fontWeight: '800', margin: '0 0 10px' }}>2-for-1 Special</h3>
       <p style={{ fontSize: '14px', color: '#b0c8d0', lineHeight: 1.6, margin: 0 }}>Choose for any two starters and pay for only one. The perfect way to begin your feast.</p>
     </div>
-    <div style={{ width: '110px', height: '110px', borderRadius: '50%', overflow: 'hidden', flexShrink: 0, border: '3px solid rgba(255,255,255,0.25)', boxShadow: '0 0 0 1px rgba(255,255,255,0.1)' }}>
-      <img src="https://images.pexels.com/photos/958545/pexels-photo-958545.jpeg?auto=compress&cs=tinysrgb&w=300" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
-    </div>
+    {/* <div style={{ width: '110px', height: '110px', borderRadius: '50%', overflow: 'hidden', flexShrink: 0, border: '3px solid rgba(255,255,255,0.25)', boxShadow: '0 0 0 1px rgba(255,255,255,0.1)' }}> */}
+      <img src="/cake.png"  />
+    {/* </div> */}
   </div>
 
 </div>
