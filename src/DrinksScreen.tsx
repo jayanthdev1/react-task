@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Search, SlidersHorizontal, UtensilsCrossed } from 'lucide-react';
+import { UtensilsCrossed } from 'lucide-react';
 import SearchOverlay from './SearchOverlay';
 import FilterModal from './FilterModal';
 import MenuCategoriesModal from './MenuCategoriesModal';
@@ -21,12 +21,16 @@ interface DrinkItem {
   isVeg: boolean;
 }
 
+const DRINK_TABS = ['Cocktails', 'Brewed drinks', 'Desserts', 'Drinks', 'Breads'];
+
 export default function DrinksScreen({ onNavigateToSpecials, onNavigateToFood }: DrinksScreenProps) {
   const [isSearchActive, setIsSearchActive] = useState(false);
   const [isFilterModalOpen, setIsFilterModalOpen] = useState(false);
   const [isCategoriesModalOpen, setIsCategoriesModalOpen] = useState(false);
   const [selectedDrink, setSelectedDrink] = useState<DrinkItem | null>(null);
   const [activeFilters, setActiveFilters] = useState(0);
+  const [alcoholicMode, setAlcoholicMode] = useState<'ALCOHOLIC' | 'NON-ALCOHOLIC'>('ALCOHOLIC');
+  const [activeTab, setActiveTab] = useState('cocktails');
 
   const drinks: DrinkItem[] = [
     {
@@ -34,7 +38,7 @@ export default function DrinksScreen({ onNavigateToSpecials, onNavigateToFood }:
       image: "https://images.pexels.com/photos/109275/pexels-photo-109275.jpeg?auto=compress&cs=tinysrgb&w=400",
       price: 250,
       time: "5-10 mins",
-      description: "A tropical blend of white rum, rich cream of coconut, and tangy pineapple juice, blended with ice for a smooth, refreshing escape.",
+      description: "Rum, coconut cream, and pineapple.",
       ingredients: ["White rum", "Coconut cream", "Pineapple juice", "Ice"],
       addons: [
         { name: "Extra coconut cream", price: 5, image: "https://images.pexels.com/photos/109275/pexels-photo-109275.jpeg?auto=compress&cs=tinysrgb&w=100" },
@@ -48,7 +52,7 @@ export default function DrinksScreen({ onNavigateToSpecials, onNavigateToFood }:
       image: "https://images.pexels.com/photos/1109062/pexels-photo-1109062.jpeg?auto=compress&cs=tinysrgb&w=400",
       price: 250,
       time: "5-10 mins",
-      description: "A spicy, zesty buck cocktail made with vodka, spicy ginger beer, and lime juice, garnished with a slice or wedge of lime.",
+      description: "Rum, coconut cream, and pineapple.",
       ingredients: ["Vodka", "Ginger beer", "Lime juice", "Ice"],
       addons: [],
       isVeg: true
@@ -58,7 +62,7 @@ export default function DrinksScreen({ onNavigateToSpecials, onNavigateToFood }:
       image: "https://images.pexels.com/photos/209594/pexels-photo-209594.jpeg?auto=compress&cs=tinysrgb&w=400",
       price: 250,
       time: "5-10 mins",
-      description: "A chic cocktail made with vodka, triple sec, cranberry juice, and freshly squeezed or sweetened lime juice.",
+      description: "Rum, coconut cream, and pineapple.",
       ingredients: ["Vodka", "Triple sec", "Cranberry juice", "Lime juice"],
       addons: [],
       isVeg: true
@@ -68,181 +72,529 @@ export default function DrinksScreen({ onNavigateToSpecials, onNavigateToFood }:
       image: "https://images.pexels.com/photos/605408/pexels-photo-605408.jpeg?auto=compress&cs=tinysrgb&w=400",
       price: 250,
       time: "5-10 mins",
-      description: "A timeless cocktail consisting of tequila, orange liqueur, and lime juice often served with salt on the rim of the glass.",
+      description: "Rum, coconut cream, and pineapple.",
       ingredients: ["Tequila", "Orange liqueur", "Lime juice", "Salt"],
       addons: [],
       isVeg: true
-    }
+    },
+    {
+      name: "Martini",
+      image: "https://images.pexels.com/photos/3407777/pexels-photo-3407777.jpeg?auto=compress&cs=tinysrgb&w=400",
+      price: 250,
+      time: "5-10 mins",
+      description: "Rum, coconut cream, and pineapple.",
+      ingredients: ["Gin", "Vermouth", "Olive"],
+      addons: [],
+      isVeg: true
+    },
+    {
+      name: "Blue lagoon",
+      image: "https://images.pexels.com/photos/1187766/pexels-photo-1187766.jpeg?auto=compress&cs=tinysrgb&w=400",
+      price: 250,
+      time: "5-10 mins",
+      description: "Rum, coconut cream, and pineapple.",
+      ingredients: ["Vodka", "Blue curacao", "Lemonade"],
+      addons: [],
+      isVeg: true
+    },
   ];
 
   return (
-    <div className="min-h-screen bg-[#1a3a47] text-white pb-20 font-sans">
-      <SearchOverlay 
-        isOpen={isSearchActive} 
-        onClose={() => setIsSearchActive(false)} 
-        onSearch={(text) => console.log('Searching for:', text)}
+    /* home screen: #162B39 bg, 393px */
+    <div style={{ minHeight: '100vh', backgroundColor: '#162B39', color: 'white', paddingBottom: '100px', position: 'relative' }}>
+      <SearchOverlay
+        isOpen={isSearchActive}
+        onClose={() => setIsSearchActive(false)}
+        onSearch={() => setIsSearchActive(false)}
       />
-
-      <FilterModal 
-        isOpen={isFilterModalOpen} 
-        onClose={() => setIsFilterModalOpen(false)} 
+      <FilterModal
+        isOpen={isFilterModalOpen}
+        onClose={() => setIsFilterModalOpen(false)}
         onApply={(count) => setActiveFilters(count)}
         type="drinks"
       />
-
-      <MenuCategoriesModal 
-        isOpen={isCategoriesModalOpen} 
-        onClose={() => setIsCategoriesModalOpen(false)} 
+      <MenuCategoriesModal
+        isOpen={isCategoriesModalOpen}
+        onClose={() => setIsCategoriesModalOpen(false)}
         onCategorySelect={(category) => {
-          console.log('Selected category:', category);
           setIsCategoriesModalOpen(false);
         }}
         type="drinks"
       />
-
       {selectedDrink && (
-        <DishDetailModal 
-          isOpen={!!selectedDrink} 
-          onClose={() => setSelectedDrink(null)} 
-          dish={selectedDrink} 
+        <DishDetailModal
+          isOpen={!!selectedDrink}
+          onClose={() => setSelectedDrink(null)}
+          dish={selectedDrink}
         />
       )}
 
-      <div className="max-w-md mx-auto relative min-h-screen">
-        <div className="flex justify-center py-6">
-          <img src="/logo.png" alt="CSAT" className="h-12" />
+      {/* Frame 201: top header area 393×351, #162B39 */}
+      <div style={{ maxWidth: '393px', margin: '0 auto', position: 'relative', padding: '0 21px', boxSizing: 'border-box' }}>
+
+        {/* Logo — centered, top:29px */}
+        <div style={{ display: 'flex', justifyContent: 'center', paddingTop: '29px', paddingBottom: '10px' }}>
+          <img src="/logo.png" alt="CSAT" style={{ width: '100px', height: '35px', objectFit: 'contain' }} />
         </div>
 
-        <div className="px-4 space-y-6">
-          {/* Categories */}
-          <div className="grid grid-cols-3 gap-3">
-            <div 
-              onClick={onNavigateToFood}
-              className="bg-[#374b5a] rounded-xl p-4 text-center opacity-60 cursor-pointer hover:opacity-100 transition-opacity"
+        {/* Frame 154: Category Boxes — 290×100, gap:25 */}
+        <div style={{ display: 'flex', flexDirection: 'row', alignItems: 'center', gap: '25px', width: '290px', height: '100px', margin: '0 auto 20px' }}>
+          {[
+            { label: 'Food', img: 'https://images.pexels.com/photos/1639562/pexels-photo-1639562.jpeg?auto=compress&cs=tinysrgb&w=200', active: false, onClick: onNavigateToFood },
+            { label: 'Drinks', img: 'https://images.pexels.com/photos/338713/pexels-photo-338713.jpeg?auto=compress&cs=tinysrgb&w=200', active: true },
+            { label: 'Tobacco', img: 'https://images.pexels.com/photos/4969832/pexels-photo-4969832.jpeg?auto=compress&cs=tinysrgb&w=200', active: false },
+          ].map(({ label, img, active, onClick }) => (
+            <div
+              key={label}
+              onClick={onClick}
+              style={{
+                width: '80px', height: '100px', borderRadius: '5px',
+                background: active
+                  ? 'linear-gradient(180deg, #DE994D 29.33%, #A56C2D 100%)'
+                  : 'linear-gradient(0deg, rgba(255,255,255,0.15), rgba(255,255,255,0.15)), #162B39',
+                border: active ? 'none' : '0.5px solid rgba(22,43,57,0.4)',
+                boxSizing: 'border-box',
+                display: 'flex', flexDirection: 'column',
+                justifyContent: 'center', alignItems: 'center', gap: '5px',
+                cursor: onClick ? 'pointer' : 'default',
+              }}
             >
-              <div className="w-14 h-14 mx-auto mb-2 rounded-full overflow-hidden bg-gray-700">
-                <img
-                  src="https://images.pexels.com/photos/1639562/pexels-photo-1639562.jpeg?auto=compress&cs=tinysrgb&w=200"
-                  alt="Food"
-                  className="w-full h-full object-cover opacity-50"
-                />
-              </div>
-              <p className="font-semibold text-gray-400">Food</p>
+              <img src={img} alt={label} style={{ width: '50px', height: '50px', borderRadius: '50%', objectFit: 'cover', boxShadow: '1px 2px 4px rgba(0,0,0,0.2)' }} />
+              <span style={{
+                fontFamily: 'Inter, sans-serif',
+                fontWeight: active ? 600 : 500,
+                fontSize: '14px', lineHeight: '17px',
+                textAlign: 'center', color: '#FFFFFF',
+                alignSelf: 'stretch',
+              }}>{label}</span>
             </div>
-            <div 
-              onClick={() => setIsCategoriesModalOpen(true)}
-              className="bg-[#c17a4a] rounded-xl p-4 text-center transform scale-105 shadow-lg z-10 cursor-pointer"
-            >
-              <div className="w-16 h-16 mx-auto mb-2 rounded-full overflow-hidden border-2 border-white/20">
-                <img
-                  src="https://images.pexels.com/photos/338713/pexels-photo-338713.jpeg?auto=compress&cs=tinysrgb&w=200"
-                  alt="Drinks"
-                  className="w-full h-full object-cover"
-                />
-              </div>
-              <p className="font-semibold">Drinks</p>
-            </div>
-            <div className="bg-[#374b5a] rounded-xl p-4 text-center">
-              <div className="w-14 h-14 mx-auto mb-2 rounded-full overflow-hidden bg-gray-700">
-                <img
-                  src="https://images.pexels.com/photos/4969832/pexels-photo-4969832.jpeg?auto=compress&cs=tinysrgb&w=200"
-                  alt="Tobacco"
-                  className="w-full h-full object-cover opacity-50"
-                />
-              </div>
-              <p className="font-semibold text-gray-400">Tobacco</p>
-            </div>
-          </div>
+          ))}
+        </div>
 
-          {/* Main Filters */}
-          <div className="flex bg-[#233a46] rounded-full p-1">
-            <button className="flex-1 bg-[#c17a4a] text-white py-2 rounded-full font-semibold text-sm">
+        {/* Frame 155: ALCOHOLIC / NON-ALCOHOLIC toggle — 351×32 */}
+        <div style={{
+          boxSizing: 'border-box',
+          width: '351px', height: '32px',
+          background: 'linear-gradient(0deg, rgba(255,255,255,0.05), rgba(255,255,255,0.05)), rgba(22,43,57,0.2)',
+          border: '0.2px solid rgba(214,147,73,0.4)',
+          boxShadow: '2px 2px 3px rgba(5,20,30,0.4)',
+          borderRadius: '50px',
+          padding: '3px',
+          display: 'flex', alignItems: 'center',
+          margin: '0 auto 0',
+        }}>
+          {/* Frame 5: inner row */}
+          <div style={{ display: 'flex', flexDirection: 'row', alignItems: 'center', gap: '11px', width: '339px', height: '26px' }}>
+            {/* Frame 5/2: ALCOHOLIC pill — active: 162px gradient, inactive: 166px dark */}
+            <button
+              onClick={() => setAlcoholicMode('ALCOHOLIC')}
+              style={{
+                boxSizing: 'border-box',
+                width: alcoholicMode === 'ALCOHOLIC' ? '162px' : '166px',
+                height: '29px',
+                background: alcoholicMode === 'ALCOHOLIC'
+                  ? 'linear-gradient(90deg, #DE994D 0%, #A56C2D 93.75%)'
+                  : 'linear-gradient(0deg, rgba(255,255,255,0.05), rgba(255,255,255,0.05)), #162B39',
+                border: alcoholicMode === 'ALCOHOLIC' ? '0.2px solid rgba(125,121,121,0.7)' : 'none',
+                borderRadius: '50px',
+                display: 'flex', justifyContent: 'center', alignItems: 'center',
+                cursor: 'pointer',
+                fontFamily: 'Inter, sans-serif', fontWeight: 600, fontSize: '14px', lineHeight: '17px',
+                color: '#FFFFFF',
+                flexShrink: 0,
+              }}
+            >
               ALCOHOLIC
             </button>
-            <button className="flex-1 bg-transparent text-gray-400 py-2 rounded-full font-semibold text-sm">
+            {/* Frame 2/5: NON-ALCOHOLIC pill — active: 168px gradient+border, inactive: 166px dark */}
+            <button
+              onClick={() => setAlcoholicMode('NON-ALCOHOLIC')}
+              style={{
+                boxSizing: 'border-box',
+                width: alcoholicMode === 'NON-ALCOHOLIC' ? '168px' : '166px',
+                height: '29px',
+                background: alcoholicMode === 'NON-ALCOHOLIC'
+                  ? 'linear-gradient(90deg, #DE994D 0%, #A56C2D 93.75%)'
+                  : 'linear-gradient(0deg, rgba(255,255,255,0.05), rgba(255,255,255,0.05)), #162B39',
+                border: alcoholicMode === 'NON-ALCOHOLIC' ? '0.2px solid rgba(125,121,121,0.7)' : 'none',
+                borderRadius: '50px',
+                display: 'flex', justifyContent: 'center', alignItems: 'center',
+                cursor: 'pointer',
+                fontFamily: 'Inter, sans-serif', fontWeight: 600, fontSize: '14px', lineHeight: '17px',
+                color: '#FFFFFF',
+                flexShrink: 0,
+              }}
+            >
               NON-ALCOHOLIC
             </button>
           </div>
+        </div>
+      </div>
 
-          {/* Sub Navigation */}
-          <div className="flex gap-6 border-b border-gray-600 pb-2 overflow-x-auto no-scrollbar">
-            <button className="text-[#c17a4a] border-b-2 border-[#c17a4a] pb-2 font-medium whitespace-nowrap">Cocktails</button>
-            <button className="text-gray-400 font-medium whitespace-nowrap">Brewed drinks</button>
-            <button className="text-gray-400 font-medium whitespace-nowrap">Desserts</button>
-            <button className="text-gray-400 font-medium whitespace-nowrap">Drinks</button>
-          </div>
-
-          {/* Search Bar */}
-          <div className="relative">
-            <Search className="absolute left-4 top-3 w-5 h-5 text-[#c17a4a]" />
-            <input
-              type="text"
-              readOnly
-              onClick={() => setIsSearchActive(true)}
-              placeholder="Search items..."
-              className="w-full bg-[#0f2830] text-white pl-12 pr-12 py-3 rounded-xl placeholder-gray-400 focus:outline-none border border-transparent focus:border-[#c17a4a]/50 cursor-pointer"
-            />
-            <div className="absolute right-4 top-3 cursor-pointer" onClick={(e) => {
-                e.stopPropagation();
-                setIsFilterModalOpen(true);
-            }}>
-                <SlidersHorizontal className={`w-5 h-5 ${activeFilters > 0 ? "text-[#b06d30]" : "text-[#c17a4a]"}`} />
-                {activeFilters > 0 && (
-                    <span className="absolute -top-2 -right-2 bg-[#b06d30] text-white text-[10px] font-bold w-4 h-4 rounded-full flex items-center justify-center border border-[#1a3a47]">
-                        {activeFilters}
-                    </span>
+      {/* Nav tabs row + divider — Group 9 */}
+      <div style={{ maxWidth: '393px', margin: '0 auto', marginTop: '12px' }}>
+        {/* Frame 6: tabs row — scrollable, gap:30 */}
+        <div style={{
+          display: 'flex', flexDirection: 'row', alignItems: 'flex-start',
+          gap: '30px', paddingLeft: '15px', paddingRight: '15px',
+          overflowX: 'auto', scrollbarWidth: 'none',
+          width: '377.96px', boxSizing: 'border-box',
+        }}>
+          {DRINK_TABS.map((tab) => {
+            const tabKey = tab.toLowerCase().replace(/ /g, '');
+            const isActive = activeTab === tabKey;
+            return (
+              <div key={tab} style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '2px', flexShrink: 0 }}>
+                <button
+                  onClick={() => setActiveTab(tabKey)}
+                  style={{
+                    background: 'none', border: 'none', cursor: 'pointer', padding: 0,
+                    fontFamily: 'Inter, sans-serif', fontWeight: 500,
+                    fontSize: '16px', lineHeight: '19px',
+                    color: isActive ? '#D08A3C' : '#FFFFFF',
+                    whiteSpace: 'nowrap',
+                  }}
+                >{tab}</button>
+                {isActive && (
+                  <div style={{ width: '80px', height: 0, borderTop: '3px solid #D08A3C' }} />
                 )}
+              </div>
+            );
+          })}
+        </div>
+        {/* Line 1 divider */}
+        <div style={{ height: '1px', background: '#E5E1DA', marginTop: '2px' }} />
+      </div>
+
+      {/* Main scrollable content area — Frame 64 */}
+      <div style={{
+        maxWidth: '393px', margin: '0 auto',
+        padding: '0 21px', boxSizing: 'border-box',
+        paddingTop: '16px',
+      }}>
+
+        {/* Frame 156: Search bar — 337×35, #112D40, border-radius:50px */}
+        <div style={{
+          boxSizing: 'border-box',
+          width: '100%', height: '35px',
+          background: '#112D40',
+          border: '0.6px solid rgba(208,138,60,0.6)',
+          boxShadow: '4px 4px 2px #0D2433',
+          borderRadius: '50px',
+          marginBottom: '20px',
+          display: 'flex', flexDirection: 'row',
+          justifyContent: 'space-between', alignItems: 'center',
+          padding: '7px 14px',
+        }}>
+          {/* Frame 157 inner row */}
+          <div style={{ display: 'flex', flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', width: '100%' }}>
+            {/* Frame 68: search icon + placeholder */}
+            <div
+              style={{ display: 'flex', flexDirection: 'row', alignItems: 'center', gap: '10px', cursor: 'pointer', flex: 1 }}
+              onClick={() => setIsSearchActive(true)}
+            >
+              <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+                <circle cx="7" cy="7" r="5" stroke="rgba(208,138,60,0.8)" strokeWidth="1.5" />
+                <line x1="11" y1="11" x2="15" y2="15" stroke="rgba(208,138,60,0.8)" strokeWidth="1.5" strokeLinecap="round" />
+              </svg>
+              <span style={{ fontFamily: 'Roboto, sans-serif', fontWeight: 400, fontSize: '12px', color: 'rgba(255,255,255,0.55)' }}>Search items...</span>
+            </div>
+            {/* Filter sliders icon — matching MenuScreen reference */}
+            <div
+              style={{ position: 'relative', width: '23px', height: '19.5px', cursor: 'pointer', flexShrink: 0 }}
+              onClick={() => setIsFilterModalOpen(true)}
+            >
+              <svg width="13" height="13" viewBox="0 0 13 13" fill="none" style={{ position: 'absolute', left: 0, top: '6.5px' }}>
+                {/* 3 horizontal slider lines */}
+                <line x1="1" y1="2.5" x2="12" y2="2.5" stroke={activeFilters > 0 ? '#A9712F' : 'rgba(208,138,60,0.8)'} strokeWidth="1.1" strokeLinecap="round" />
+                <circle cx="4" cy="2.5" r="1.5" fill={activeFilters > 0 ? '#A9712F' : 'rgba(208,138,60,0.8)'} />
+                <line x1="1" y1="6.5" x2="12" y2="6.5" stroke={activeFilters > 0 ? '#A9712F' : 'rgba(208,138,60,0.8)'} strokeWidth="1.1" strokeLinecap="round" />
+                <circle cx="9" cy="6.5" r="1.5" fill={activeFilters > 0 ? '#A9712F' : 'rgba(208,138,60,0.8)'} />
+                <line x1="1" y1="10.5" x2="12" y2="10.5" stroke={activeFilters > 0 ? '#A9712F' : 'rgba(208,138,60,0.8)'} strokeWidth="1.1" strokeLinecap="round" />
+                <circle cx="6" cy="10.5" r="1.5" fill={activeFilters > 0 ? '#A9712F' : 'rgba(208,138,60,0.8)'} />
+              </svg>
+              {activeFilters > 0 && (
+                <div style={{ position: 'absolute', left: '9px', top: 0, width: '14px', height: '15px' }}>
+                  <div style={{ position: 'absolute', left: 0, top: '1px', width: '14px', height: '14px', borderRadius: '50%', background: '#A9712F' }} />
+                  <span style={{ position: 'absolute', left: '3px', top: '1px', fontFamily: 'Roboto, sans-serif', fontWeight: 400, fontSize: '9px', color: '#FFFFFF', lineHeight: '14px' }}>{activeFilters}</span>
+                </div>
+              )}
             </div>
           </div>
+        </div>
 
-          {/* Items Grid */}
-          <div className="grid grid-cols-2 gap-4">
-            {drinks.map((drink, idx) => (
-              <div key={idx} className="bg-[#0f2830] rounded-xl overflow-hidden cursor-pointer" onClick={() => setSelectedDrink(drink)}>
-                <div className="relative">
-                  <img
-                    src={drink.image}
-                    alt={drink.name}
-                    className="w-full h-40 object-cover"
-                  />
-                  <span className="absolute bottom-2 left-2 bg-[#b06d30] text-white text-[10px] uppercase font-bold px-2 py-1 rounded">
-                    Signature
-                  </span>
-                </div>
-                <div className="p-3">
-                  <h3 className="font-serif text-lg leading-tight mb-1">{drink.name}</h3>
-                  <div className="mb-2">
-                    <span className="text-white font-bold text-sm">₹{drink.price}</span>
+        {/* Frame 64: Drink cards grid — 314px wide, 2-column, gap:20, scrollable */}
+        <div style={{
+          display: 'flex', flexDirection: 'column',
+          alignItems: 'center',
+          gap: '20px',
+          width: '314px',
+          margin: '0 auto',
+        }}>
+
+          {/* Group 14: Row 1 — Pina colada + Moscow mule */}
+          <div style={{ position: 'relative', width: '314px', height: '212px', flexShrink: 0 }}>
+            {[drinks[0], drinks[1]].map((drink, colIdx) => (
+              <div
+                key={drink.name}
+                onClick={() => setSelectedDrink(drink)}
+                style={{
+                  display: 'flex', flexDirection: 'column', alignItems: 'flex-start',
+                  gap: '2px',
+                  position: 'absolute',
+                  width: '127px',
+                  height: '198px',
+                  left: colIdx === 0 ? '0px' : '187px',
+                  top: colIdx === 0 ? '0px' : '14px',
+                  cursor: 'pointer',
+                }}
+              >
+                {/* Group 3: image container */}
+                <div style={{ position: 'relative', width: colIdx === 0 ? '109px' : '122.23px', height: '123px', flexShrink: 0 }}>
+                  <div style={{
+                    boxSizing: 'border-box',
+                    position: 'absolute',
+                    width: '109px', height: '109px',
+                    left: colIdx === 0 ? '0px' : '13.23px',
+                    top: '0px',
+                    border: '0.4px solid rgba(125,121,121,0.7)',
+                    borderRadius: '3px',
+                    overflow: 'hidden',
+                  }}>
+                    <img src={drink.image} alt={drink.name} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
                   </div>
-                  <p className="text-xs text-gray-400 leading-relaxed line-clamp-2">
-                    {drink.description}
-                  </p>
+                  <div style={{
+                    display: 'flex', flexDirection: 'row', justifyContent: 'center', alignItems: 'center',
+                    padding: '0px 3px', gap: '10px',
+                    position: 'absolute',
+                    width: '91px', height: '20px',
+                    left: colIdx === 0 ? '7.77px' : '0px',
+                    top: '103px',
+                    background: '#A9712F',
+                    borderRadius: '2px',
+                  }}>
+                    <span style={{ fontFamily: 'Playfair, "Playfair Display", serif', fontWeight: 600, fontSize: '12px', lineHeight: '14px', color: '#FFFFFF' }}>Signature</span>
+                  </div>
+                </div>
+                <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-start', gap: '3px', width: '127px' }}>
+                  <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-start', gap: '1px', width: '155px' }}>
+                    <span style={{ fontFamily: 'Playfair, "Playfair Display", serif', fontWeight: 500, fontSize: '18px', lineHeight: '22px', color: '#FFFFFF', display: 'block' }}>{drink.name}</span>
+                    <div style={{ display: 'flex', flexDirection: 'row', alignItems: 'center', gap: '20px', width: '123px', height: '15px' }}>
+                      <span style={{ fontFamily: 'Roboto, sans-serif', fontWeight: 400, fontSize: '13px', lineHeight: '15px', color: '#FFFFFF' }}>₹{drink.price}</span>
+                    </div>
+                  </div>
+                  <p style={{ fontFamily: 'Inter, sans-serif', fontWeight: 400, fontSize: '12px', lineHeight: '18px', letterSpacing: '0.02em', color: 'rgba(255,255,255,0.8)', margin: 0, width: '127px' }}>{drink.description}</p>
                 </div>
               </div>
             ))}
           </div>
-        </div>
 
-        {/* Floating Actions */}
-        <div className="fixed bottom-6 right-6 flex flex-col items-end gap-3 z-50">
+          {/* Clear filters pill — shown between row 1 and row 2 when filters active */}
           {activeFilters > 0 && (
-            <button 
-              onClick={() => setActiveFilters(0)}
-              className="bg-[#b06d30]/90 backdrop-blur-sm text-white rounded-full px-6 py-3 shadow-lg font-semibold text-sm animate-fadeIn"
-            >
-              Clear filters
-            </button>
+            <div style={{ display: 'flex', justifyContent: 'center', width: '100%' }}>
+              <button
+                onClick={() => setActiveFilters(0)}
+                style={{
+                  width: '146px', height: '33px',
+                  background: '#A9712F', borderRadius: '80px',
+                  border: 'none', cursor: 'pointer',
+                  display: 'flex', justifyContent: 'center', alignItems: 'center',
+                  padding: '10px',
+                }}
+              >
+                <span style={{ fontFamily: 'Inter, sans-serif', fontWeight: 600, fontSize: '13px', lineHeight: '16px', color: '#FFFFFF' }}>Clear filters</span>
+              </button>
+            </div>
           )}
 
-          <button 
-            onClick={() => setIsCategoriesModalOpen(true)}
-            className="bg-[#c17a4a] text-white rounded-full p-4 shadow-lg flex items-center gap-2 pr-6"
-          >
-            <UtensilsCrossed className="w-6 h-6" />
-            <span className="font-semibold">Menu</span>
-          </button>
+          {/* Row 2 — Cosmopolitan + Margarita (dimmed when filters active) */}
+          <div style={{ position: 'relative', width: '314px', height: '212px', flexShrink: 0, opacity: activeFilters > 0 ? 0.8 : 1 }}>
+            {[drinks[2], drinks[3]].map((drink, colIdx) => (
+              <div
+                key={drink.name}
+                onClick={() => setSelectedDrink(drink)}
+                style={{
+                  display: 'flex', flexDirection: 'column', alignItems: 'flex-start',
+                  gap: '2px',
+                  position: 'absolute',
+                  width: '127px',
+                  height: '198px',
+                  left: colIdx === 0 ? '0px' : '187px',
+                  top: colIdx === 0 ? '0px' : '14px',
+                  cursor: 'pointer',
+                }}
+              >
+                <div style={{ position: 'relative', width: colIdx === 0 ? '109px' : '122.23px', height: '123px', flexShrink: 0 }}>
+                  <div style={{
+                    boxSizing: 'border-box',
+                    position: 'absolute',
+                    width: '109px', height: '109px',
+                    left: colIdx === 0 ? '13.23px' : '13.23px',
+                    top: '0px',
+                    border: '0.4px solid rgba(125,121,121,0.7)',
+                    borderRadius: '3px',
+                    overflow: 'hidden',
+                  }}>
+                    <img src={drink.image} alt={drink.name} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                  </div>
+                  <div style={{
+                    display: 'flex', flexDirection: 'row', justifyContent: 'center', alignItems: 'center',
+                    padding: '0px 3px', gap: '10px',
+                    position: 'absolute',
+                    width: '91px', height: '20px',
+                    left: '0px', top: '103px',
+                    background: '#A9712F', borderRadius: '2px',
+                  }}>
+                    <span style={{ fontFamily: 'Playfair, "Playfair Display", serif', fontWeight: 600, fontSize: '12px', lineHeight: '14px', color: '#FFFFFF' }}>Signature</span>
+                  </div>
+                </div>
+                <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-start', gap: '3px', width: '142px' }}>
+                  <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-start', gap: '1px', width: '155px' }}>
+                    <span style={{ fontFamily: 'Playfair, "Playfair Display", serif', fontWeight: 500, fontSize: '18px', lineHeight: '22px', color: '#FFFFFF' }}>{drink.name}</span>
+                    <div style={{ display: 'flex', flexDirection: 'row', alignItems: 'center', gap: '20px', width: '123px', height: '15px' }}>
+                      <span style={{ fontFamily: 'Roboto, sans-serif', fontWeight: 400, fontSize: '13px', lineHeight: '15px', color: '#FFFFFF' }}>₹{drink.price}</span>
+                    </div>
+                  </div>
+                  <p style={{ fontFamily: 'Inter, sans-serif', fontWeight: 400, fontSize: '12px', lineHeight: '18px', letterSpacing: '0.02em', color: 'rgba(255,255,255,0.8)', margin: 0, width: '142px' }}>{drink.description}</p>
+                </div>
+              </div>
+            ))}
+          </div>
+
+          {/* Frame 60: Buy 1 get 1 special card — 351×162, #FAF7F2 (dimmed when filters active) */}
+          <div style={{
+            boxSizing: 'border-box',
+            position: 'relative', overflow: 'hidden',
+            width: '351px', height: '162px',
+            background: '#FAF7F2',
+            border: '1px solid #848181',
+            boxShadow: '5px 6px 4px rgba(0,0,0,0.2)',
+            borderRadius: '5px',
+            flexShrink: 0,
+            cursor: 'pointer',
+            opacity: activeFilters > 0 ? 0.8 : 1,
+          }} onClick={onNavigateToSpecials}>
+            {/* Frame 61: text block */}
+            <div style={{ position: 'absolute', left: '16px', top: '17px', display: 'flex', flexDirection: 'column', gap: '10px', width: '172px', height: '140px' }}>
+              <span style={{
+                fontFamily: 'Playfair, "Playfair Display", serif',
+                fontWeight: 500, fontSize: '25px', lineHeight: '30px', color: '#162B39',
+              }}>Buy 1, get 1 special</span>
+              <span style={{
+                fontFamily: 'Inter, sans-serif', fontWeight: 400,
+                fontSize: '12px', lineHeight: '18px', letterSpacing: '0.02em', color: '#162B39',
+              }}>Buy a cocktail of above ₹250, and get another cocktails for absolutely free.</span>
+            </div>
+            {/* Ellipse 7: circular image — 217×217, right side */}
+            <div style={{
+              position: 'absolute',
+              width: '217px', height: '217px',
+              left: '194px', top: '-15px',
+              borderRadius: '50%',
+              overflow: 'hidden',
+              boxShadow: '-4px -5px 9px rgba(22,43,57,0.2)',
+            }}>
+              <img src="/drinks.png" alt="Buy 1 Get 1" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+            </div>
+          </div>
+
+          {/* Group 13: Row 3 — Martini + Blue lagoon (dimmed when filters active) */}
+          <div style={{ position: 'relative', width: '314px', height: '212px', flexShrink: 0, opacity: activeFilters > 0 ? 0.8 : 1 }}>
+            {[drinks[4], drinks[5]].map((drink, colIdx) => (
+              <div
+                key={drink.name}
+                onClick={() => setSelectedDrink(drink)}
+                style={{
+                  display: 'flex', flexDirection: 'column', alignItems: 'flex-start',
+                  gap: '2px',
+                  position: 'absolute',
+                  width: '127px',
+                  height: '198px',
+                  left: colIdx === 0 ? '0px' : '187px',
+                  top: colIdx === 0 ? '0px' : '14px',
+                  cursor: 'pointer',
+                }}
+              >
+                {/* Group 3: image container */}
+                <div style={{ position: 'relative', width: '122.23px', height: '123px', flexShrink: 0 }}>
+                  <div style={{
+                    boxSizing: 'border-box',
+                    position: 'absolute',
+                    width: '109px', height: '109px',
+                    left: '13.23px', top: '0px',
+                    border: '0.4px solid rgba(125,121,121,0.7)',
+                    borderRadius: '3px',
+                    overflow: 'hidden',
+                  }}>
+                    <img src={drink.image} alt={drink.name} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                  </div>
+                  <div style={{
+                    display: 'flex', flexDirection: 'row', justifyContent: 'center', alignItems: 'center',
+                    padding: '0px 3px', gap: '10px',
+                    position: 'absolute',
+                    width: '91px', height: '20px',
+                    left: '0px', top: '103px',
+                    background: '#A9712F', borderRadius: '2px',
+                  }}>
+                    <span style={{
+                      fontFamily: 'Playfair, "Playfair Display", serif',
+                      fontWeight: 600, fontSize: '12px', lineHeight: '14px', color: '#FFFFFF',
+                    }}>Signature</span>
+                  </div>
+                </div>
+                {/* Frame 45: text block */}
+                <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-start', gap: '3px', width: '142px' }}>
+                  <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-start', gap: '1px', width: '155px' }}>
+                    <span style={{
+                      fontFamily: 'Playfair, "Playfair Display", serif',
+                      fontWeight: 500, fontSize: '18px', lineHeight: '22px', color: '#FFFFFF',
+                    }}>{drink.name}</span>
+                    <div style={{ display: 'flex', flexDirection: 'row', alignItems: 'center', gap: '20px', width: '123px', height: '15px' }}>
+                      <span style={{
+                        fontFamily: 'Roboto, sans-serif', fontWeight: 400, fontSize: '13px', lineHeight: '15px', color: '#FFFFFF',
+                      }}>₹{drink.price}</span>
+                    </div>
+                  </div>
+                  <p style={{
+                    fontFamily: 'Inter, sans-serif', fontWeight: 400, fontSize: '12px', lineHeight: '18px',
+                    letterSpacing: '0.02em', color: 'rgba(255,255,255,0.8)',
+                    margin: 0, width: '142px',
+                  }}>{drink.description}</p>
+                </div>
+              </div>
+            ))}
+          </div>
+
         </div>
+
+
       </div>
+
+      {/* Frame 82: Menu FAB — 85×85 circle, gradient, bottom-right */}
+      <button
+        onClick={() => setIsCategoriesModalOpen(true)}
+        style={{
+          position: 'fixed', bottom: '24px', right: '16px',
+          width: '85px', height: '85px', borderRadius: '50%',
+          background: 'linear-gradient(180deg, #F0A450 0%, #CF8838 88.47%)',
+          border: '1px solid rgba(240,164,80,0.8)',
+          boxShadow: '2px 2px 4px rgba(199,106,58,0.4)',
+          cursor: 'pointer', zIndex: 50,
+          display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center',
+          padding: 0,
+          filter: 'drop-shadow(2px 2.5px 3px rgba(155,98,34,0.3))',
+        }}
+      >
+        {/* Frame 80: icon + label */}
+        <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', width: '45px', height: '48px', justifyContent: 'center' }}>
+          <UtensilsCrossed style={{ width: '30px', height: '30px', color: '#FFFFFF' }} />
+          <span style={{
+            fontFamily: 'Inter, sans-serif', fontWeight: 500,
+            fontSize: '15px', lineHeight: '18px',
+            textAlign: 'center', color: '#FFFFFF', width: '45px',
+          }}>Menu</span>
+        </div>
+      </button>
     </div>
   );
 }
