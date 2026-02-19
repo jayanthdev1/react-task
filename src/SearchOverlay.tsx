@@ -7,7 +7,6 @@ interface SearchOverlayProps {
   initialQuery?: string;
 }
 
-// All popular searches — filtered live as the user types
 const ALL_POPULAR = [
   'Saffron biryani',
   'Paneer makhani',
@@ -19,22 +18,17 @@ const ALL_POPULAR = [
   'Dal fry',
 ];
 
-// Arrow icon — glyphs:arrow-bold rotated -30deg
+// Arrow icon — rotated -30deg
 function ArrowBold() {
   return (
     <svg
-      width="13"
-      height="13"
-      viewBox="0 0 13 13"
-      fill="none"
-      style={{ transform: 'rotate(-30deg)', flexShrink: 0 }}
+      width="13" height="13" viewBox="0 0 13 13" fill="none"
+      className="-rotate-[30deg] shrink-0"
     >
       <path
         d="M2.5 6.5H10.5M7.5 3.5L10.5 6.5L7.5 9.5"
         stroke="rgba(85,85,85,0.8)"
-        strokeWidth="1.5"
-        strokeLinecap="round"
-        strokeLinejoin="round"
+        strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"
       />
     </svg>
   );
@@ -59,9 +53,8 @@ const SearchOverlay = ({ isOpen, onClose, onSearch, initialQuery = '' }: SearchO
 
   const isTyping = query.length > 0;
 
-  // When typing: filter suggestions by query; when empty: show first 5
   const suggestions = isTyping
-    ? ALL_POPULAR.filter((s) => s.toLowerCase().includes(query.toLowerCase()))
+    ? ALL_POPULAR.filter(s => s.toLowerCase().includes(query.toLowerCase()))
     : ALL_POPULAR.slice(0, 5);
 
   const handleSelect = (term: string) => {
@@ -78,128 +71,75 @@ const SearchOverlay = ({ isOpen, onClose, onSearch, initialQuery = '' }: SearchO
 
   return (
     <>
-      {/* Backdrop — rgba(22,43,57,0.55) over home screen */}
+      {/* Backdrop */}
       <div
-        style={{ position: 'fixed', inset: 0, zIndex: 60, background: 'rgba(22,43,57,0.55)' }}
+        className="fixed inset-0 z-[60] bg-[rgba(22,43,57,0.55)]"
         onClick={onClose}
       />
 
-      {/*
-        iPhone 16-3 search panel
-        393×338px, #FAF7F2, border-radius: 0 0 10px 10px
-      */}
-      <div style={{
-        position: 'fixed', top: 0, left: '50%', transform: 'translateX(-50%)',
-        width: '393px', minHeight: '200px', maxHeight: '338px',
-        background: '#FAF7F2',
-        borderRadius: '0px 0px 10px 10px',
-        zIndex: 70,
-        overflow: 'hidden',
-        animation: 'slideDown 0.22s ease',
-      }}>
+      {/* Search panel — 393×338, #FAF7F2, rounded bottom corners */}
+      <div
+        className="fixed top-0 left-1/2 -translate-x-1/2 w-[393px] min-h-[200px] max-h-[338px] bg-[#FAF7F2] rounded-b-[10px] z-[70] overflow-hidden"
+        style={{ animation: 'slideDown 0.22s ease' }}
+      >
+        {/* Frame 133: column gap:10, left:13, top:30 */}
+        <div className="absolute left-[13px] top-[30px] flex flex-col items-start gap-[10px] w-[360px]">
 
-        {/*
-          Frame 133: column gap:10
-          Empty:  360×206.79 at left:13, top:30
-          Typing: 360×115.27 at left:13, top:30
-        */}
-        <div style={{
-          display: 'flex', flexDirection: 'column', alignItems: 'flex-start',
-          gap: '10px',
-          position: 'absolute', left: '13px', top: '30px',
-          width: '360px',
-        }}>
+          {/* Input row + Cancel */}
+          <div className="flex flex-row justify-between items-center gap-[10px] w-[360px] h-[30px]">
 
-          {/* ── Frame 134: input row + Cancel ── */}
-          <div style={{
-            display: 'flex', flexDirection: 'row',
-            justifyContent: 'space-between', alignItems: 'center',
-            gap: '10px', width: '360px', height: '30px',
-          }}>
-
-            {/*
-              Frame 67 (input pill)
-              Empty:  width 360px
-              Typing: width 298px (room for "Cancel")
-            */}
+            {/* Input pill */}
             <form
               onSubmit={handleSubmit}
-              style={{
-                boxSizing: 'border-box', position: 'relative',
-                width: isTyping ? '298px' : '360px', height: '30px',
-                background: '#FAF7F2',
-                border: '0.6px solid rgba(125,121,121,0.7)',
-                borderRadius: '50px',
-                transition: 'width 0.18s ease',
-                flexShrink: 0,
-              }}
+              className={[
+                'box-border relative h-[30px] bg-[#FAF7F2] border-[0.6px] border-[rgba(125,121,121,0.7)] rounded-[50px] transition-[width] duration-[180ms] ease-linear shrink-0',
+                isTyping ? 'w-[298px]' : 'w-[360px]',
+              ].join(' ')}
             >
-              {/* Frame 68: search icon + text, left:9 top:7 */}
-              <div style={{
-                display: 'flex', flexDirection: 'row', alignItems: 'center',
-                gap: '5px',
-                position: 'absolute', left: '9px', top: '7px',
-                width: isTyping ? '260px' : '342px', height: '16px',
-              }}>
-                {/* Search icon 16×16, #162B39 */}
-                <svg width="16" height="16" viewBox="0 0 16 16" fill="none" style={{ flexShrink: 0 }}>
+              {/* Icon + text row */}
+              <div
+                className={[
+                  'absolute left-[9px] top-[7px] flex flex-row items-center gap-[5px] h-[16px]',
+                  isTyping ? 'w-[260px]' : 'w-[342px]',
+                ].join(' ')}
+              >
+                {/* Search icon */}
+                <svg width="16" height="16" viewBox="0 0 16 16" fill="none" className="shrink-0">
                   <circle cx="7" cy="7" r="4.3" stroke="#162B39" strokeWidth="1.5" />
                   <line x1="10.3" y1="10.3" x2="14" y2="14" stroke="#162B39" strokeWidth="1.5" strokeLinecap="round" />
                 </svg>
 
-                {/* Typing state: typed text + vertical separator */}
+                {/* Typed text display + separator */}
                 {isTyping && (
                   <>
-                    {/* "Dal" typed text — Roboto 400 12px rgba(22,43,57,0.6) */}
-                    <span style={{
-                      fontFamily: 'Roboto, sans-serif', fontWeight: 400,
-                      fontSize: '12px', lineHeight: '14px',
-                      color: 'rgba(22,43,57,0.6)',
-                      whiteSpace: 'nowrap',
-                    }}>{query}</span>
-                    {/* Line 9: vertical separator, 14px tall */}
-                    <div style={{
-                      width: '1px', height: '14px',
-                      background: '#162B39', flexShrink: 0,
-                    }} />
+                    <span className="font-roboto font-normal text-[12px] leading-[14px] text-[rgba(22,43,57,0.6)] whitespace-nowrap">
+                      {query}
+                    </span>
+                    <div className="w-px h-[14px] bg-brand-bg shrink-0" />
                   </>
                 )}
 
-                {/* Invisible real input (always present for focus/typing) */}
+                {/* Real input (always present) */}
                 <input
                   ref={inputRef}
                   type="text"
                   value={query}
-                  onChange={(e) => setQuery(e.target.value)}
+                  onChange={e => setQuery(e.target.value)}
                   placeholder={isTyping ? '' : 'Search items, categories.....'}
-                  style={{
-                    background: 'transparent', border: 'none', outline: 'none',
-                    fontFamily: 'Roboto, sans-serif', fontWeight: 400,
-                    fontSize: '12px', lineHeight: '14px',
-                    color: 'rgba(22,43,57,0.6)',
-                    width: '100%',
-                    caretColor: '#162B39',
-                    // Hide text visually (we show it as <span> above when typing)
-                    opacity: isTyping ? 0 : 1,
-                    position: isTyping ? 'absolute' : 'static',
-                    pointerEvents: 'auto',
-                  }}
+                  className={[
+                    'bg-transparent border-none outline-none font-roboto font-normal text-[12px] leading-[14px] text-[rgba(22,43,57,0.6)] w-full caret-brand-bg',
+                    isTyping ? 'opacity-0 absolute pointer-events-auto' : 'opacity-100 static',
+                  ].join(' ')}
                 />
               </div>
 
-              {/* material-symbols:cancel — clear button, only when typing */}
+              {/* Clear button — only when typing */}
               {isTyping && (
                 <button
                   type="button"
                   onClick={() => { setQuery(''); inputRef.current?.focus(); }}
-                  style={{
-                    position: 'absolute', right: '7px', top: '7px',
-                    width: '16px', height: '16px',
-                    background: 'none', border: 'none', padding: 0, cursor: 'pointer',
-                    display: 'flex', alignItems: 'center', justifyContent: 'center',
-                  }}
+                  className="absolute right-[7px] top-[7px] w-[16px] h-[16px] bg-transparent border-none p-0 cursor-pointer flex items-center justify-center"
                 >
-                  {/* X circle in #555555 */}
                   <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
                     <circle cx="8" cy="8" r="6.5" fill="#555555" />
                     <line x1="5.5" y1="5.5" x2="10.5" y2="10.5" stroke="white" strokeWidth="1.4" strokeLinecap="round" />
@@ -209,64 +149,42 @@ const SearchOverlay = ({ isOpen, onClose, onSearch, initialQuery = '' }: SearchO
               )}
             </form>
 
-            {/* "Cancel" button — only shown when typing, Roboto 400 14px black */}
+            {/* Cancel — only when typing */}
             {isTyping && (
               <button
                 onClick={onClose}
-                style={{
-                  background: 'none', border: 'none', padding: 0, cursor: 'pointer',
-                  fontFamily: 'Roboto, sans-serif', fontWeight: 400,
-                  fontSize: '14px', lineHeight: '16px',
-                  color: '#000000', whiteSpace: 'nowrap',
-                  width: '43px', height: '16px',
-                  flexShrink: 0,
-                }}
+                className="bg-transparent border-none p-0 cursor-pointer font-roboto font-normal text-[14px] leading-[16px] text-black whitespace-nowrap w-[43px] h-[16px] shrink-0"
               >
                 Cancel
               </button>
             )}
           </div>
 
-          {/* ── Frame 132: suggestions section ── */}
-          <div style={{
-            display: 'flex', flexDirection: 'column', alignItems: 'flex-start',
-            gap: '15px', width: '360px',
-          }}>
+          {/* Suggestions section */}
+          <div className="flex flex-col items-start gap-[15px] w-[360px]">
 
-            {/* "Popular searches" heading — only shown when NOT typing */}
+            {/* "Popular searches" heading — only when not typing */}
             {!isTyping && (
-              <span style={{
-                fontFamily: 'Playfair Display, Playfair, serif',
-                fontWeight: 500, fontSize: '16px', lineHeight: '19px',
-                color: '#555555', width: '360px',
-              }}>Popular searches</span>
+              <span className="font-playfair font-medium text-[16px] leading-[19px] text-[#555555] w-[360px]">
+                Popular searches
+              </span>
             )}
 
-            {/* Frame 128: suggestion rows, column gap:11 */}
-            <div style={{
-              display: 'flex', flexDirection: 'column', alignItems: 'flex-start',
-              gap: '11px', width: '360px',
-            }}>
+            {/* Suggestion rows */}
+            <div className="flex flex-col items-start gap-[11px] w-[360px]">
               {suggestions.map((term, idx) => (
                 <div
                   key={idx}
                   onClick={() => handleSelect(term)}
-                  style={{
-                    display: 'flex', flexDirection: 'row',
-                    justifyContent: 'space-between', alignItems: 'center',
-                    width: '360px', height: '17.76px', cursor: 'pointer',
-                  }}
+                  className="flex flex-row justify-between items-center w-[360px] h-[17.76px] cursor-pointer"
                 >
-                  <span style={{
-                    fontFamily: 'Playfair Display, Playfair, serif',
-                    fontWeight: 400, fontSize: '13px', lineHeight: '16px',
-                    color: 'rgba(85,85,85,0.8)',
-                  }}>{term}</span>
+                  <span className="font-playfair font-normal text-[13px] leading-[16px] text-[rgba(85,85,85,0.8)]">
+                    {term}
+                  </span>
                   <ArrowBold />
                 </div>
               ))}
             </div>
-
           </div>
         </div>
       </div>

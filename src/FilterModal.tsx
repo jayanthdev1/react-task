@@ -7,20 +7,11 @@ interface FilterModalProps {
   type?: 'food' | 'drinks';
 }
 
-// ── Custom radio button (Figma: 13×13 circle, #A9712F fill when selected) ──
+// ── Custom radio button (13×13 circle, #A9712F fill when selected) ──
 function RadioDot({ selected }: { selected: boolean }) {
   return (
-    <span style={{
-      display: 'inline-flex', alignItems: 'center', justifyContent: 'center',
-      width: '13px', height: '13px',
-      borderRadius: '50%',
-      background: '#FAF7F2',
-      border: selected ? '1px solid #555555' : '1.3px solid #555555',
-      boxSizing: 'border-box', flexShrink: 0,
-    }}>
-      {selected && (
-        <span style={{ width: '9px', height: '9px', borderRadius: '50%', background: '#A9712F' }} />
-      )}
+    <span className="inline-flex items-center justify-center w-[13px] h-[13px] rounded-full bg-[#FAF7F2] border border-[#555555] box-border shrink-0">
+      {selected && <span className="w-[9px] h-[9px] rounded-full bg-brand-amber" />}
     </span>
   );
 }
@@ -28,20 +19,33 @@ function RadioDot({ selected }: { selected: boolean }) {
 // ── Custom checkbox (square, #A9712F fill when selected) ──
 function CheckBox({ selected }: { selected: boolean }) {
   return (
-    <span style={{
-      display: 'inline-flex', alignItems: 'center', justifyContent: 'center',
-      width: '13px', height: '13px',
-      borderRadius: '2px',
-      background: selected ? '#A9712F' : '#FAF7F2',
-      border: '1px solid #555555',
-      boxSizing: 'border-box', flexShrink: 0,
-    }}>
+    <span
+      className={[
+        'inline-flex items-center justify-center w-[13px] h-[13px] rounded-[2px] border border-[#555555] box-border shrink-0',
+        selected ? 'bg-brand-amber' : 'bg-[#FAF7F2]',
+      ].join(' ')}
+    >
       {selected && (
         <svg width="9" height="7" viewBox="0 0 9 7" fill="none">
           <path d="M1 3L3.5 5.5L8 1" stroke="white" strokeWidth="1.2" strokeLinecap="round" strokeLinejoin="round" />
         </svg>
       )}
     </span>
+  );
+}
+
+// ── Reusable option row (label + radio/checkbox) ──
+function OptionRow({
+  label, onClick, children,
+}: { label: string; onClick: () => void; children: React.ReactNode }) {
+  return (
+    <div
+      className="flex flex-row justify-between items-center w-[230px] min-h-[16px] mb-[14px] cursor-pointer"
+      onClick={onClick}
+    >
+      <span className="font-inter font-normal text-[13px] leading-[16px] text-[#555555]">{label}</span>
+      {children}
+    </div>
   );
 }
 
@@ -98,51 +102,22 @@ const FilterModal = ({ isOpen, onClose, onApply, type = 'food' }: FilterModalPro
     setter(list.includes(item) ? list.filter(x => x !== item) : [...list, item]);
   };
 
-  // ── The panel is 393px wide, 435px tall, bottom-anchored ──
   return (
-    <div style={{
-      position: 'fixed', inset: 0, zIndex: 60,
-      display: 'flex', alignItems: 'flex-end', justifyContent: 'center',
-      background: 'rgba(22,43,57,0.7)',
-    }} onClick={onClose}>
-      {/* iPhone 16 - 2: bottom sheet 393×435, #FAF7F2, border-radius:15px 15px 0 0 */}
+    <div
+      className="fixed inset-0 z-[60] flex items-end justify-center bg-[rgba(22,43,57,0.7)]"
+      onClick={onClose}
+    >
+      {/* Bottom sheet — 393×435, #FAF7F2, rounded top corners */}
       <div
-        style={{
-          position: 'relative',
-          width: '393px', height: '435px',
-          background: '#FAF7F2',
-          borderRadius: '15px 15px 0px 0px',
-          overflow: 'hidden',
-          flexShrink: 0,
-        }}
+        className="relative w-[393px] h-[435px] bg-[#FAF7F2] rounded-t-[15px] overflow-hidden shrink-0"
         onClick={e => e.stopPropagation()}
       >
-
-        {/* ── Frame 24: header — top:24, width:350, space-between ── */}
-        <div style={{
-          position: 'absolute',
-          width: '350px', height: '24px',
-          left: 'calc(50% - 350px/2 - 6.5px)',
-          top: '24px',
-          display: 'flex', flexDirection: 'row',
-          justifyContent: 'space-between', alignItems: 'center',
-        }}>
-          {/* "Filters" — Inter 600 20px #555555 */}
-          <span style={{
-            fontFamily: 'Inter, sans-serif', fontWeight: 600,
-            fontSize: '20px', lineHeight: '24px', color: '#555555',
-          }}>Filters</span>
-
-          {/* charm:cross — 24×24, #F8F1ED, border-radius:100px */}
+        {/* ── Header ── */}
+        <div className="absolute w-[350px] h-[24px] top-[24px] left-[calc(50%-175px-6.5px)] flex flex-row justify-between items-center">
+          <span className="font-inter font-semibold text-[20px] leading-[24px] text-[#555555]">Filters</span>
           <button
             onClick={onClose}
-            style={{
-              width: '24px', height: '24px',
-              background: '#F8F1ED', borderRadius: '100px',
-              border: 'none', cursor: 'pointer',
-              display: 'flex', alignItems: 'center', justifyContent: 'center',
-              flexShrink: 0,
-            }}
+            className="w-[24px] h-[24px] bg-[#F8F1ED] rounded-full border-none cursor-pointer flex items-center justify-center shrink-0"
           >
             <svg width="11" height="11" viewBox="0 0 11 11" fill="none">
               <line x1="1.5" y1="1.5" x2="9.5" y2="9.5" stroke="#555555" strokeWidth="1.5" strokeLinecap="round" />
@@ -151,330 +126,188 @@ const FilterModal = ({ isOpen, onClose, onApply, type = 'food' }: FilterModalPro
           </button>
         </div>
 
-        {/* ── Line 3: horizontal divider at top:64 ── */}
-        <div style={{
-          position: 'absolute', left: 0, top: '64px',
-          width: '393px', height: 0,
-          borderTop: '1px solid #B6B4B1',
-        }} />
+        {/* ── Horizontal divider at top:64 ── */}
+        <div className="absolute left-0 top-[64px] w-[393px] border-t border-[#B6B4B1]" />
 
-        {/* ── Line 4: vertical divider at left:107 (64–264 = 200px tall content area) ── */}
-        <div style={{
-          position: 'absolute', left: '107px', top: '64px',
-          width: '1px', height: '284px',
-          background: '#B6B4B1',
-        }} />
+        {/* ── Vertical divider at left:107 ── */}
+        <div className="absolute left-[107px] top-[64px] w-px h-[284px] bg-[#B6B4B1]" />
 
-        {/* ── Frame 27: left sidebar — 106×200, top:64 ── */}
-        <div style={{
-          position: 'absolute', left: 0, top: '64px',
-          width: '106px',
-          display: 'flex', flexDirection: 'column',
-        }}>
+        {/* ── Left sidebar ── */}
+        <div className="absolute left-0 top-[64px] w-[106px] flex flex-col">
           {categories.map((cat) => {
             const isActive = activeTab === cat;
             return (
               <button
                 key={cat}
                 onClick={() => setActiveTab(cat)}
-                style={{
-                  boxSizing: 'border-box',
-                  width: '106px', height: '50px',
-                  background: isActive ? '#A9712F' : '#FAF7F2',
-                  border: isActive ? 'none' : '0.35px solid #B6B4B1',
-                  display: 'flex', alignItems: 'center',
-                  padding: '10px 15px', cursor: 'pointer', textAlign: 'left',
-                }}
+                className={[
+                  'box-border w-[106px] h-[50px] flex items-center px-[15px] py-[10px] cursor-pointer text-left',
+                  isActive
+                    ? 'bg-brand-amber border-none'
+                    : 'bg-[#FAF7F2] border border-[#B6B4B1]/50',
+                ].join(' ')}
               >
-                <span style={{
-                  fontFamily: 'Inter, sans-serif', fontWeight: 400,
-                  fontSize: '14px', lineHeight: '17px',
-                  color: isActive ? '#FAF7F2' : '#555555',
-                }}>{cat}</span>
+                <span className={[
+                  'font-inter font-normal text-[14px] leading-[17px]',
+                  isActive ? 'text-[#FAF7F2]' : 'text-[#555555]',
+                ].join(' ')}>{cat}</span>
               </button>
             );
           })}
         </div>
 
-        {/* ── Right content area — left:118, top:64, width:calc(393-118)=275 ── */}
-        <div style={{
-          position: 'absolute', left: '118px', top: '64px',
-          width: '258px',
-          overflowY: 'auto', height: '284px', scrollbarWidth: 'none',
-        }}>
+        {/* ── Right content area ── */}
+        <div className="absolute left-[118px] top-[64px] w-[258px] h-[284px] overflow-y-auto [scrollbar-width:none]">
 
-          {/* ── PRICE RANGE TAB (drinks) — Mid range / Premium / Luxury radio ── */}
+          {/* PRICE RANGE TAB (drinks) */}
           {activeTab === 'Price range' && (
-            <div style={{ marginTop: '11px' }}>
+            <div className="mt-[11px]">
               {['Mid range', 'Premium', 'Luxury'].map(item => (
                 <div
                   key={item}
-                  style={{
-                    display: 'flex', flexDirection: 'row',
-                    justifyContent: 'space-between', alignItems: 'center',
-                    width: '238px', height: '16px', marginBottom: '15px', cursor: 'pointer',
-                  }}
+                  className="flex flex-row justify-between items-center w-[238px] h-[16px] mb-[15px] cursor-pointer"
                   onClick={() => setSelectedPriceRange(item)}
                 >
-                  <span style={{ fontFamily: 'Inter, sans-serif', fontWeight: 400, fontSize: '13px', lineHeight: '16px', color: '#555555' }}>{item}</span>
+                  <span className="font-inter font-normal text-[13px] leading-[16px] text-[#555555]">{item}</span>
                   <RadioDot selected={selectedPriceRange === item} />
                 </div>
               ))}
             </div>
           )}
 
-          {/* ── PRICE TAB (food only) ── */}
+          {/* PRICE TAB (food only) */}
           {activeTab === 'Price' && (
             <div>
-              {/* "Select your price range" — Inter 500 15px #555555, top:75-64=11 */}
-              <span style={{
-                display: 'block',
-                fontFamily: 'Inter, sans-serif', fontWeight: 500,
-                fontSize: '15px', lineHeight: '18px', color: '#555555',
-                marginTop: '11px',
-              }}>Select your price range</span>
+              <span className="block font-inter font-medium text-[15px] leading-[18px] text-[#555555] mt-[11px]">
+                Select your price range
+              </span>
+              <span className="block text-center font-inter font-medium text-[14px] leading-[17px] text-brand-amber mt-[11px]">
+                ₹0 - ₹{priceMax}
+              </span>
 
-              {/* "₹0 - ₹{priceMax}" — Inter 500 14px #A9712F, top:108-64=44 */}
-              <span style={{
-                display: 'block', textAlign: 'center',
-                fontFamily: 'Inter, sans-serif', fontWeight: 500,
-                fontSize: '14px', lineHeight: '17px', color: '#A9712F',
-                marginTop: '11px',
-              }}>₹0 - ₹{priceMax}</span>
-
-              {/* Frame 15: slider — top:122-64=58, width:243 */}
-              <div style={{
-                position: 'relative', width: '243px',
-                marginTop: '8px',
-              }}>
-                {/* Group 13: track */}
-                <div style={{ position: 'relative', height: '15px', width: '229px', marginLeft: '7px' }}>
-                  {/* Line 8: track line at vertical center */}
-                  <div style={{
-                    position: 'absolute', left: 0, top: '7px',
-                    width: '229px', height: 0,
-                    borderTop: '2px solid rgba(169,113,47,0.5)',
-                  }} />
+              {/* Custom slider */}
+              <div className="relative w-[243px] mt-[8px]">
+                <div className="relative h-[15px] w-[229px] ml-[7px]">
+                  {/* Track */}
+                  <div className="absolute left-0 top-[7px] w-[229px] border-t-2 border-brand-amber/50" />
                   {/* Active fill */}
-                  <div style={{
-                    position: 'absolute', left: 0, top: '7px',
-                    width: `${(priceMax / 2000) * 229}px`, height: 0,
-                    borderTop: '2px solid #A9712F',
-                  }} />
-                  {/* Thumb: Ellipse 2 — 15×15 circle #A9712F */}
-                  <div style={{
-                    position: 'absolute',
-                    left: `${(priceMax / 2000) * 214}px`,
-                    top: 0,
-                    width: '15px', height: '15px',
-                    borderRadius: '50%', background: '#A9712F',
-                  }} />
-                  {/* Real input[range] overlaid invisibly for interaction */}
+                  <div
+                    className="absolute top-[7px] border-t-2 border-brand-amber"
+                    style={{ width: `${(priceMax / 2000) * 229}px` }}
+                  />
+                  {/* Thumb */}
+                  <div
+                    className="absolute top-0 w-[15px] h-[15px] rounded-full bg-brand-amber"
+                    style={{ left: `${(priceMax / 2000) * 214}px` }}
+                  />
+                  {/* Invisible real range input */}
                   <input
                     type="range" min={0} max={2000} step={50}
                     value={priceMax}
                     onChange={e => setPriceMax(parseInt(e.target.value))}
-                    style={{
-                      position: 'absolute', left: 0, top: 0,
-                      width: '229px', height: '15px',
-                      opacity: 0, cursor: 'pointer', margin: 0, padding: 0,
-                    }}
+                    className="absolute left-0 top-0 w-[229px] h-[15px] opacity-0 cursor-pointer m-0 p-0"
                   />
                 </div>
-
-                {/* Frame 14: ₹0 / ₹2000 labels */}
-                <div style={{
-                  display: 'flex', flexDirection: 'row',
-                  justifyContent: 'space-between', alignItems: 'center',
-                  width: '241px', marginTop: '4px',
-                }}>
-                  <span style={{ fontFamily: 'Roboto, sans-serif', fontWeight: 400, fontSize: '12px', lineHeight: '14px', color: '#A9712F' }}>₹0</span>
-                  <span style={{ fontFamily: 'Roboto, sans-serif', fontWeight: 400, fontSize: '12px', lineHeight: '14px', color: '#A9712F' }}>₹2000</span>
+                {/* Min / Max labels */}
+                <div className="flex flex-row justify-between items-center w-[241px] mt-[4px]">
+                  <span className="font-roboto font-normal text-[12px] leading-[14px] text-brand-amber">₹0</span>
+                  <span className="font-roboto font-normal text-[12px] leading-[14px] text-brand-amber">₹2000</span>
                 </div>
               </div>
 
-              {/* Frame 28: "Low to high" — top:183-64=119 */}
+              {/* Sort: Low to high */}
               <div
-                style={{
-                  display: 'flex', flexDirection: 'row',
-                  justifyContent: 'space-between', alignItems: 'center',
-                  width: '230px', height: '16px', marginTop: '26px', cursor: 'pointer',
-                }}
+                className="flex flex-row justify-between items-center w-[230px] h-[16px] mt-[26px] cursor-pointer"
                 onClick={() => setSortOrder('lowToHigh')}
               >
-                <span style={{ fontFamily: 'Inter, sans-serif', fontWeight: 400, fontSize: '13px', lineHeight: '16px', color: '#555555' }}>Low to high</span>
+                <span className="font-inter font-normal text-[13px] leading-[16px] text-[#555555]">Low to high</span>
                 <RadioDot selected={sortOrder === 'lowToHigh'} />
               </div>
 
-              {/* Frame 29: "High to low" — top:209-64=145 */}
+              {/* Sort: High to low */}
               <div
-                style={{
-                  display: 'flex', flexDirection: 'row',
-                  justifyContent: 'space-between', alignItems: 'center',
-                  width: '230px', height: '16px', marginTop: '10px', cursor: 'pointer',
-                }}
+                className="flex flex-row justify-between items-center w-[230px] h-[16px] mt-[10px] cursor-pointer"
                 onClick={() => setSortOrder('highToLow')}
               >
-                <span style={{ fontFamily: 'Inter, sans-serif', fontWeight: 400, fontSize: '13px', lineHeight: '16px', color: '#555555' }}>High to low</span>
+                <span className="font-inter font-normal text-[13px] leading-[16px] text-[#555555]">High to low</span>
                 <RadioDot selected={sortOrder === 'highToLow'} />
               </div>
             </div>
           )}
 
-          {/* ── PREP TIME TAB (food) / SERVING TYPE TAB (drinks) ── */}
+          {/* PREP TIME (food) / SERVING TYPE (drinks) */}
           {(activeTab === 'Prep time' || activeTab === 'Serving type') && (
-            <div style={{ marginTop: '11px' }}>
+            <div className="mt-[11px]">
               {(type === 'food'
                 ? ['Quick bites', '5-10 mins', '10-15 mins', '15+ mins']
                 : ['By glass', 'By bottle', 'Pitcher']
               ).map(item => (
-                <div
-                  key={item}
-                  style={{
-                    display: 'flex', flexDirection: 'row',
-                    justifyContent: 'space-between', alignItems: 'center',
-                    width: '230px', height: '16px', marginBottom: '16px', cursor: 'pointer',
-                  }}
-                  onClick={() => setSelectedPrepTime(item)}
-                >
-                  <span style={{ fontFamily: 'Inter, sans-serif', fontWeight: 400, fontSize: '13px', lineHeight: '16px', color: '#555555' }}>{item}</span>
+                <OptionRow key={item} label={item} onClick={() => setSelectedPrepTime(item)}>
                   <RadioDot selected={selectedPrepTime === item} />
-                </div>
+                </OptionRow>
               ))}
             </div>
           )}
 
-          {/* ── ALLERGIES TAB ── */}
+          {/* ALLERGIES TAB */}
           {activeTab === 'Allergies' && (
-            <div style={{ marginTop: '11px' }}>
+            <div className="mt-[11px]">
               {['Milk/dairy', 'Peanuts', 'Eggs', 'Soy', 'Shellfish(prawns, crabs, lobster)', 'Fish', 'Sesame'].map(item => (
-                <div
-                  key={item}
-                  style={{
-                    display: 'flex', flexDirection: 'row',
-                    justifyContent: 'space-between', alignItems: 'center',
-                    width: '230px', minHeight: '16px', marginBottom: '14px', cursor: 'pointer',
-                  }}
-                  onClick={() => toggleList(selectedAllergies, item, setSelectedAllergies)}
-                >
-                  <span style={{ fontFamily: 'Inter, sans-serif', fontWeight: 400, fontSize: '13px', lineHeight: '16px', color: '#555555' }}>{item}</span>
+                <OptionRow key={item} label={item} onClick={() => toggleList(selectedAllergies, item, setSelectedAllergies)}>
                   <CheckBox selected={selectedAllergies.includes(item)} />
-                </div>
+                </OptionRow>
               ))}
             </div>
           )}
 
-          {/* ── DIET & PREPARATION TAB ── */}
+          {/* DIET & PREPARATION TAB */}
           {activeTab === 'Diet & preparation' && (
-            <div style={{ marginTop: '11px' }}>
-              <span style={{ display: 'block', fontFamily: 'Inter, sans-serif', fontWeight: 500, fontSize: '13px', color: '#555555', marginBottom: '10px' }}>Diet type</span>
+            <div className="mt-[11px]">
+              <span className="block font-inter font-medium text-[13px] text-[#555555] mb-[10px]">Diet type</span>
               {['Eggetarian', 'Vegan', 'Gluten-free'].map(item => (
-                <div
-                  key={item}
-                  style={{
-                    display: 'flex', flexDirection: 'row',
-                    justifyContent: 'space-between', alignItems: 'center',
-                    width: '230px', height: '16px', marginBottom: '14px', cursor: 'pointer',
-                  }}
-                  onClick={() => toggleList(selectedDiet, item, setSelectedDiet)}
-                >
-                  <span style={{ fontFamily: 'Inter, sans-serif', fontWeight: 400, fontSize: '13px', lineHeight: '16px', color: '#555555' }}>{item}</span>
+                <OptionRow key={item} label={item} onClick={() => toggleList(selectedDiet, item, setSelectedDiet)}>
                   <CheckBox selected={selectedDiet.includes(item)} />
-                </div>
+                </OptionRow>
               ))}
-              <span style={{ display: 'block', fontFamily: 'Inter, sans-serif', fontWeight: 500, fontSize: '13px', color: '#555555', margin: '6px 0 10px' }}>Preparation</span>
+              <span className="block font-inter font-medium text-[13px] text-[#555555] mt-[6px] mb-[10px]">Preparation</span>
               {['Less oil', 'No onion, no garlic', 'Baked'].map(item => (
-                <div
-                  key={item}
-                  style={{
-                    display: 'flex', flexDirection: 'row',
-                    justifyContent: 'space-between', alignItems: 'center',
-                    width: '230px', height: '16px', marginBottom: '14px', cursor: 'pointer',
-                  }}
-                  onClick={() => toggleList(selectedPreferences, item, setSelectedPreferences)}
-                >
-                  <span style={{ fontFamily: 'Inter, sans-serif', fontWeight: 400, fontSize: '13px', lineHeight: '16px', color: '#555555' }}>{item}</span>
+                <OptionRow key={item} label={item} onClick={() => toggleList(selectedPreferences, item, setSelectedPreferences)}>
                   <CheckBox selected={selectedPreferences.includes(item)} />
-                </div>
+                </OptionRow>
               ))}
             </div>
           )}
 
-          {/* ── OCCASION TAB (drinks) ── */}
+          {/* OCCASION TAB (drinks) */}
           {activeTab === 'Occasion' && (
-            <div style={{ marginTop: '11px' }}>
+            <div className="mt-[11px]">
               {['Party picks', 'Casual', 'Celebrations'].map(item => (
-                <div
-                  key={item}
-                  style={{
-                    display: 'flex', flexDirection: 'row',
-                    justifyContent: 'space-between', alignItems: 'center',
-                    width: '230px', height: '16px', marginBottom: '16px', cursor: 'pointer',
-                  }}
-                  onClick={() => setSelectedOccasion(item)}
-                >
-                  <span style={{ fontFamily: 'Inter, sans-serif', fontWeight: 400, fontSize: '13px', lineHeight: '16px', color: '#555555' }}>{item}</span>
+                <OptionRow key={item} label={item} onClick={() => setSelectedOccasion(item)}>
                   <RadioDot selected={selectedOccasion === item} />
-                </div>
+                </OptionRow>
               ))}
             </div>
           )}
         </div>
 
-        {/* ── Line 5: divider above buttons at top:348 ── */}
-        <div style={{
-          position: 'absolute', left: 0, top: '348px',
-          width: '393px', height: 0,
-          borderTop: '1px solid #B6B4B1',
-        }} />
+        {/* ── Divider above buttons ── */}
+        <div className="absolute left-0 top-[348px] w-[393px] border-t border-[#B6B4B1]" />
 
-        {/* ── Frame 31: buttons at top:369, width:250, centered ── */}
-        <div style={{
-          position: 'absolute',
-          width: '250px', height: '30px',
-          left: 'calc(50% - 250px/2 + 0.5px)', top: '369px',
-          display: 'flex', flexDirection: 'row',
-          justifyContent: 'space-between', alignItems: 'center',
-          gap: '20px',
-        }}>
-          {/* Frame 30: Clear All — 114×30, border:#555555 */}
+        {/* ── Action buttons ── */}
+        <div className="absolute top-[369px] w-[250px] h-[30px] left-[calc(50%-125px+0.5px)] flex flex-row justify-between items-center gap-[20px]">
           <button
             onClick={handleClear}
-            style={{
-              boxSizing: 'border-box',
-              width: '114px', height: '30px',
-              background: '#FAF7F2',
-              border: '0.5px solid #555555',
-              borderRadius: '2px',
-              cursor: 'pointer',
-              display: 'flex', justifyContent: 'center', alignItems: 'center',
-            }}
+            className="box-border w-[114px] h-[30px] bg-[#FAF7F2] border-[0.5px] border-[#555555] rounded-[2px] cursor-pointer flex justify-center items-center"
           >
-            <span style={{
-              fontFamily: 'Inter, sans-serif', fontWeight: 500,
-              fontSize: '14px', lineHeight: '17px', color: '#555555',
-            }}>Clear All</span>
+            <span className="font-inter font-medium text-[14px] leading-[17px] text-[#555555]">Clear All</span>
           </button>
-
-          {/* Frame 25: Apply filter — 114×30, #A9712F */}
           <button
             onClick={handleApply}
-            style={{
-              width: '114px', height: '30px',
-              background: '#A9712F',
-              border: 'none',
-              borderRadius: '2px',
-              cursor: 'pointer',
-              display: 'flex', justifyContent: 'center', alignItems: 'center',
-            }}
+            className="w-[114px] h-[30px] bg-brand-amber border-none rounded-[2px] cursor-pointer flex justify-center items-center"
           >
-            <span style={{
-              fontFamily: 'Inter, sans-serif', fontWeight: 500,
-              fontSize: '14px', lineHeight: '17px', color: '#FAF7F2',
-            }}>Apply filter</span>
+            <span className="font-inter font-medium text-[14px] leading-[17px] text-[#FAF7F2]">Apply filter</span>
           </button>
         </div>
-
       </div>
     </div>
   );
