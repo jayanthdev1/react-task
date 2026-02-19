@@ -94,25 +94,28 @@ function VegDot({ isVeg }: { isVeg: boolean }) {
 }
 
 // ── Dish card ────────────────────────────────────────────────────────────────
-function DishCard({ dish, onClick }: { dish: Dish; onClick: () => void }) {
+function DishCard({ dish, onClick, cardWidth = 138 }: { dish: Dish; onClick: () => void; cardWidth?: number }) {
   const badgeWidth = dish.badge === "Chef's special" || dish.badge === 'Signature' ? '100px' : '117px';
   return (
     <div
       onClick={onClick}
-      style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-start', gap: '6px', width: '155px', cursor: 'pointer' }}
+      style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-start', gap: '2px', width: `${cardWidth}px`, cursor: 'pointer' }}
     >
-      {/* Image + badge */}
-      <div style={{ position: 'relative', width: '100%', flexShrink: 0 }}>
+      {/* Group 3: image container 122px wide, image 109px */}
+      <div style={{ position: 'relative', width: `${cardWidth}px`, height: '123px', flexShrink: 0 }}>
+        {/* Frame 11: bordered image box, left offset ~13px to center */}
         <div style={{
-          width: '100%', height: '116px',
+          position: 'absolute', left: '13px', top: 0,
+          width: '109px', height: '109px',
           border: '0.4px solid rgba(125,121,121,0.7)',
           borderRadius: '3px', overflow: 'hidden', boxSizing: 'border-box',
         }}>
           <img src={dish.image} alt={dish.name} style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block' }} />
         </div>
+        {/* Frame 12: badge — left:0, top:103 */}
         {dish.badge && (
           <div style={{
-            position: 'absolute', left: 0, bottom: '-3px',
+            position: 'absolute', left: 0, top: '103px',
             width: badgeWidth, height: '20px',
             background: '#A9712F', borderRadius: '2px',
             display: 'flex', justifyContent: 'center', alignItems: 'center',
@@ -126,29 +129,37 @@ function DishCard({ dish, onClick }: { dish: Dish; onClick: () => void }) {
         )}
       </div>
 
-      {/* Text block */}
-      <div style={{ display: 'flex', flexDirection: 'column', gap: '3px', width: '100%', paddingTop: '4px' }}>
+      {/* Frame 45: text column, gap:3 */}
+      <div style={{ display: 'flex', flexDirection: 'column', gap: '3px', width: `${cardWidth}px` }}>
+        {/* Dish name */}
         <span style={{
           fontFamily: 'Playfair, "Playfair Display", serif',
-          fontWeight: 500, fontSize: '17px', lineHeight: '21px',
+          fontWeight: 500, fontSize: '18px', lineHeight: '22px',
           color: '#FFFFFF', display: 'block',
         }}>{dish.name}</span>
-        {/* price + time */}
+        {/* Frame 44: price + time row */}
         <div style={{ display: 'flex', flexDirection: 'row', alignItems: 'center', gap: '10px' }}>
+          {/* Frame 13: veg dot + price */}
           <div style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
             <VegDot isVeg={!!dish.isVeg} />
-            <span style={{ fontFamily: 'Roboto, sans-serif', fontWeight: 400, fontSize: '13px', color: '#FFFFFF' }}>₹{dish.price}</span>
+            <span style={{ fontFamily: 'Roboto, sans-serif', fontWeight: 400, fontSize: '13px', lineHeight: '15px', color: '#FFFFFF' }}>₹{dish.price}</span>
           </div>
+          {/* Frame 16: clock + time, opacity 0.7 */}
           <div style={{ display: 'flex', alignItems: 'center', gap: '3px', opacity: 0.7 }}>
-            <span style={{ fontSize: '11px' }}>🕐</span>
-            <span style={{ fontFamily: 'Roboto, sans-serif', fontWeight: 300, fontSize: '11px', color: 'rgba(255,255,255,0.9)' }}>{dish.time}</span>
+            <svg width="12" height="12" viewBox="0 0 12 12" fill="none">
+              <circle cx="6" cy="6" r="5" stroke="rgba(255,255,255,0.9)" strokeWidth="1"/>
+              <line x1="6" y1="3" x2="6" y2="6.5" stroke="rgba(255,255,255,0.9)" strokeWidth="1" strokeLinecap="round"/>
+              <line x1="6" y1="6.5" x2="8" y2="6.5" stroke="rgba(255,255,255,0.9)" strokeWidth="1" strokeLinecap="round"/>
+            </svg>
+            <span style={{ fontFamily: 'Roboto, sans-serif', fontWeight: 300, fontSize: '11px', lineHeight: '17px', color: 'rgba(255,255,255,0.9)' }}>{dish.time}</span>
           </div>
         </div>
+        {/* Description */}
         {dish.description && (
           <p style={{
             fontFamily: 'Inter, sans-serif', fontWeight: 400, fontSize: '12px',
-            lineHeight: '17px', letterSpacing: '0.02em',
-            color: 'rgba(255,255,255,0.75)', margin: 0,
+            lineHeight: '18px', letterSpacing: '0.02em',
+            color: 'rgba(255,255,255,0.8)', margin: 0,
           }}>{dish.description}</p>
         )}
       </div>
@@ -372,77 +383,114 @@ export default function MenuScreen({ onNavigateToSpecials, onNavigateToDrinks }:
           </div>
         </div>
 
-        {/* ── Dish grid: 2-column flex ── */}
-        <div style={{ display: 'flex', flexDirection: 'column', gap: '28px', width: '100%' }}>
+        {/* ── Frame 62: Dish grid — Group 10 (first 2 dishes) + 2-for-1 + Group 11 (last 4 dishes) ── */}
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '20px', width: '100%' }}>
 
           {filteredDishes.length === 0 ? (
             <div style={{ textAlign: 'center', color: 'rgba(255,255,255,0.5)', padding: '40px 0', fontFamily: 'Inter, sans-serif', fontSize: '14px' }}>
               No {filterType.toLowerCase()} items available
             </div>
           ) : (
-            <div style={{
-              display: 'grid',
-              gridTemplateColumns: '1fr 1fr',
-              gap: '24px 16px',
-              width: '100%',
-            }}>
-              {filteredDishes.map((dish) => (
-                <DishCard key={dish.name} dish={dish} onClick={() => setSelectedDish(dish)} />
-              ))}
-            </div>
+            <>
+              {/* Group 10: first 2 dishes — staggered, second column top+14px */}
+              {filteredDishes.slice(0, 2).length > 0 && (
+                <div style={{ position: 'relative', width: '351px', height: '232px', flexShrink: 0 }}>
+                  {/* Left card — top: 0 */}
+                  {filteredDishes[0] && (
+                    <div style={{ position: 'absolute', left: '12.6px', top: 0 }}>
+                      <DishCard dish={filteredDishes[0]} onClick={() => setSelectedDish(filteredDishes[0])} />
+                    </div>
+                  )}
+                  {/* Right card — top: 14px (staggered) */}
+                  {filteredDishes[1] && (
+                    <div style={{ position: 'absolute', left: '200.5px', top: '14px' }}>
+                      <DishCard dish={filteredDishes[1]} onClick={() => setSelectedDish(filteredDishes[1])} />
+                    </div>
+                  )}
+                </div>
+              )}
+
+              {/* Frame 140: "Clear filters" pill */}
+              {activeFilterCount > 0 && (
+                <div style={{ display: 'flex', justifyContent: 'center' }}>
+                  <button
+                    onClick={() => setActiveFilterCount(0)}
+                    style={{
+                      width: '146px', height: '33px',
+                      background: '#A9712F', borderRadius: '80px',
+                      border: 'none', cursor: 'pointer',
+                      display: 'flex', justifyContent: 'center', alignItems: 'center',
+                      padding: '10px',
+                    }}
+                  >
+                    <span style={{
+                      fontFamily: 'Inter, sans-serif', fontWeight: 600,
+                      fontSize: '13px', lineHeight: '16px', color: '#FFFFFF',
+                    }}>Clear filters</span>
+                  </button>
+                </div>
+              )}
+
+              
+
+              {/* Frame 62: Group 11 — dishes 3-6, staggered 2-col */}
+              {filteredDishes.slice(2).length > 0 && (
+                <div style={{ position: 'relative', width: '351px', height: '500px', flexShrink: 0 }}>
+                  {/* Column A: dishes at index 2 and 4 */}
+                  {filteredDishes[2] && (
+                    <div style={{ position: 'absolute', left: '12.39px', top: 0 }}>
+                      <DishCard dish={filteredDishes[2]} onClick={() => setSelectedDish(filteredDishes[2])} />
+                    </div>
+                  )}
+                  {filteredDishes[4] && (
+                    <div style={{ position: 'absolute', left: '0px', top: '252px' }}>
+                      <DishCard dish={filteredDishes[4]} onClick={() => setSelectedDish(filteredDishes[4])} />
+                    </div>
+                  )}
+                  {/* Column B: dishes at index 3 and 5 — top+14px stagger on first */}
+                  {filteredDishes[3] && (
+                    <div style={{ position: 'absolute', left: '200.5px', top: '14px' }}>
+                      <DishCard dish={filteredDishes[3]} onClick={() => setSelectedDish(filteredDishes[3])} />
+                    </div>
+                  )}
+                  {filteredDishes[5] && (
+                    <div style={{ position: 'absolute', left: '187.79px', top: '266px' }}>
+                      <DishCard dish={filteredDishes[5]} onClick={() => setSelectedDish(filteredDishes[5])} />
+                    </div>
+                  )}
+                </div>
+              )}
+              {/* Frame 60: 2-for-1 Special card */}
+              <div style={{
+                position: 'relative', overflow: 'hidden',
+                width: '351px', height: '162px',
+                background: '#FAF7F2',
+                border: '1px solid #848181',
+                boxShadow: '5px 6px 4px rgba(0,0,0,0.2)',
+                borderRadius: '5px', boxSizing: 'border-box',
+                cursor: 'pointer', flexShrink: 0,
+              }} onClick={onNavigateToSpecials}>
+                <div style={{ position: 'absolute', left: '16px', top: '11px', display: 'flex', flexDirection: 'column', gap: '10px', width: '172px' }}>
+                  <span style={{
+                    fontFamily: 'Playfair, "Playfair Display", serif',
+                    fontWeight: 500, fontSize: '25px', lineHeight: '30px', color: '#162B39',
+                  }}>2-for-1 Special</span>
+                  <span style={{
+                    fontFamily: 'Inter, sans-serif', fontWeight: 400,
+                    fontSize: '12px', lineHeight: '18px', letterSpacing: '0.02em', color: '#162B39',
+                  }}>Choose any two starters and pay for only one. The perfect way to begin your feast.</span>
+                </div>
+                <div style={{
+                  position: 'absolute', right: '-23px', top: '-27px',
+                  width: '217px', height: '217px', borderRadius: '50%',
+                  overflow: 'hidden',
+                  boxShadow: '-3px -6px 7px rgba(22,43,57,0.25)',
+                }}>
+                  <img src="/food.png" alt="Special" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                </div>
+              </div>
+            </>
           )}
-
-          {/* Frame 140: "Clear filters" pill — 146×33, #A9712F, border-radius:80px — only when filters active */}
-          {activeFilterCount > 0 && (
-            <div style={{ display: 'flex', justifyContent: 'center' }}>
-              <button
-                onClick={() => setActiveFilterCount(0)}
-                style={{
-                  width: '146px', height: '33px',
-                  background: '#A9712F', borderRadius: '80px',
-                  border: 'none', cursor: 'pointer',
-                  display: 'flex', justifyContent: 'center', alignItems: 'center',
-                  padding: '10px',
-                }}
-              >
-                <span style={{
-                  fontFamily: 'Inter, sans-serif', fontWeight: 600,
-                  fontSize: '13px', lineHeight: '16px', color: '#FFFFFF',
-                }}>Clear filters</span>
-              </button>
-            </div>
-          )}
-
-          {/* 2-for-1 Special card */}
-          <div style={{
-            position: 'relative', overflow: 'hidden',
-            width: '100%', height: '162px',
-            background: '#FAF7F2',
-            border: '1px solid #848181',
-            boxShadow: '5px 6px 4px rgba(0,0,0,0.2)',
-            borderRadius: '5px', boxSizing: 'border-box',
-            cursor: 'pointer',
-          }} onClick={onNavigateToSpecials}>
-            <div style={{ position: 'absolute', left: '16px', top: '11px', display: 'flex', flexDirection: 'column', gap: '10px', width: '172px' }}>
-              <span style={{
-                fontFamily: 'Playfair, "Playfair Display", serif',
-                fontWeight: 500, fontSize: '25px', lineHeight: '30px', color: '#162B39',
-              }}>2-for-1 Special</span>
-              <span style={{
-                fontFamily: 'Inter, sans-serif', fontWeight: 400,
-                fontSize: '12px', lineHeight: '18px', letterSpacing: '0.02em', color: '#162B39',
-              }}>Choose any two starters and pay for only one. The perfect way to begin your feast.</span>
-            </div>
-            <div style={{
-              position: 'absolute', right: '-30px', top: '-30px',
-              width: '200px', height: '200px', borderRadius: '50%',
-              overflow: 'hidden',
-              boxShadow: '-3px -6px 7px rgba(22,43,57,0.25)',
-            }}>
-              <img src="/food.png" alt="Special" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
-            </div>
-          </div>
-
         </div>
       </div>
 
@@ -452,7 +500,7 @@ export default function MenuScreen({ onNavigateToSpecials, onNavigateToDrinks }:
         onClick={() => setIsMenuModalOpen(true)}
         style={{
           position: 'fixed', bottom: '24px', right: '16px',
-          width: '85px', height: '85px', borderRadius: '50%',
+          width: '70px', height: '70px', borderRadius: '50%',
           background: 'linear-gradient(180deg, #F0A450 0%, #CF8838 88.47%)',
           border: '1px solid rgba(240,164,80,0.8)',
           boxShadow: '2px 2.5px 3px rgba(155,98,34,0.3), 2px 2px 4px rgba(199,106,58,0.4)',

@@ -22,6 +22,7 @@ interface DishDetailModalProps {
   isOpen: boolean;
   onClose: () => void;
   dish: Dish;
+  type?: 'food' | 'drink';
 }
 
 // ── Veg/Non-veg dot (matches menu screen spec) ───────────────────────────────
@@ -38,7 +39,8 @@ function VegDot({ isVeg }: { isVeg: boolean }) {
   );
 }
 
-const DishDetailModal = ({ isOpen, onClose, dish }: DishDetailModalProps) => {
+const DishDetailModal = ({ isOpen, onClose, dish, type = 'food' }: DishDetailModalProps) => {
+  const isDrink = type === 'drink';
   useEffect(() => {
     document.body.style.overflow = isOpen ? 'hidden' : 'unset';
     return () => { document.body.style.overflow = 'unset'; };
@@ -90,7 +92,6 @@ const DishDetailModal = ({ isOpen, onClose, dish }: DishDetailModalProps) => {
 
         {/* ── Frame 110: top bar — left:23, top:35, 230×32, space-between ── */}
         <div style={{
-          position: 'sticky', top: 0, zIndex: 10,
           display: 'flex', flexDirection: 'row',
           justifyContent: 'space-between', alignItems: 'center',
           width: '230px', height: '32px',
@@ -116,19 +117,19 @@ const DishDetailModal = ({ isOpen, onClose, dish }: DishDetailModalProps) => {
             </svg>
           </button>
 
-          {/* Frame 99: calories badge — 93×29, rgba(22,43,57,0.8), border-radius:5px */}
+          {/* Frame 99: calories badge — 93×29. Amber for drink, dark navy for food */}
           <div style={{
             display: 'flex', flexDirection: 'row',
             justifyContent: 'center', alignItems: 'center',
-            gap: '10px',
+            gap: '4px',
             width: '93px', height: '29px',
-            background: 'rgba(22,43,57,0.8)',
-            border: '0.7px solid rgba(22,43,57,0.6)',
+            background: isDrink ? 'rgba(208,138,60,0.8)' : 'rgba(22,43,57,0.8)',
+            border: `0.7px solid ${isDrink ? 'rgba(208,138,60,0.8)' : 'rgba(22,43,57,0.6)'}`,
             borderRadius: '5px',
             flexShrink: 0,
           }}>
             {/* Frame 100: flame icon + "450 kcal" */}
-            <div style={{ display: 'flex', flexDirection: 'row', alignItems: 'center', gap: 0 }}>
+            <div style={{ display: 'flex', flexDirection: 'row', alignItems: 'center', gap: '2px' }}>
               {/* lets-icons:calories — simplified flame SVG 18×18 */}
               <svg width="18" height="18" viewBox="0 0 18 18" fill="none" style={{ flexShrink: 0 }}>
                 <path d="M9 2C9 2 11.5 5 10.5 7.5C12 6.5 12.5 4.5 12.5 4.5C13.5 6 14 8 13 10.5C12.2 12.5 10.5 14 9 14C7.5 14 5.8 12.5 5 10.5C4 8 4.5 6 6 4.5C6 4.5 6.5 7 8 7.5C7 5 9 2 9 2Z"
@@ -150,11 +151,11 @@ const DishDetailModal = ({ isOpen, onClose, dish }: DishDetailModalProps) => {
           width: '208px',
           margin: '20px 0 0 20px',
         }}>
-          {/* image 28 — 208×180, border 0.5px rgba(169,113,47,0.2), border-radius:10px */}
+          {/* image 28 — 208×180. Drink: no border/radius. Food: subtle border + rounded */}
           <div style={{
             width: '208px', height: '180px',
-            border: '0.5px solid rgba(169,113,47,0.2)',
-            borderRadius: '10px',
+            border: isDrink ? 'none' : '0.5px solid rgba(169,113,47,0.2)',
+            borderRadius: isDrink ? '0px' : '10px',
             overflow: 'hidden', boxSizing: 'border-box', flexShrink: 0,
           }}>
             <img
@@ -169,7 +170,7 @@ const DishDetailModal = ({ isOpen, onClose, dish }: DishDetailModalProps) => {
             alignItems: 'flex-start', gap: '13px',
             width: '216px',
           }}>
-            {/* Frame 101: dish name + veg dot */}
+            {/* Frame 101: dish name + veg dot (veg dot hidden for drinks) */}
             <div style={{
               display: 'flex', flexDirection: 'row',
               alignItems: 'flex-end', gap: '5px',
@@ -179,11 +180,11 @@ const DishDetailModal = ({ isOpen, onClose, dish }: DishDetailModalProps) => {
                 fontFamily: 'Playfair, "Playfair Display", serif',
                 fontWeight: 500, fontSize: '30px', lineHeight: '36px',
                 color: '#162B39',
-              }}>{dish.name}</span>
-              <VegDot isVeg={!!dish.isVeg} />
+              }}>{dish.name.replace(/\b\w/g, c => c.toUpperCase())}</span>
+              {!isDrink && <VegDot isVeg={!!dish.isVeg} />}
             </div>
 
-            {/* Frame 103: price + time */}
+            {/* Frame 103: price (+ time only for food) */}
             <div style={{
               display: 'flex', flexDirection: 'row',
               alignItems: 'center', gap: '25px',
@@ -194,21 +195,22 @@ const DishDetailModal = ({ isOpen, onClose, dish }: DishDetailModalProps) => {
                 fontSize: '16px', lineHeight: '19px', color: '#A9712F',
               }}>₹{dish.price}</span>
 
-              {/* Frame 102: clock icon + time */}
-              <div style={{
-                display: 'flex', flexDirection: 'row',
-                alignItems: 'center', gap: '3px',
-              }}>
-                {/* mingcute:time-line 16×16 */}
-                <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
-                  <circle cx="8" cy="8" r="6" stroke="#A9712F" strokeWidth="1.4" />
-                  <path d="M8 5V8.5L10.5 10" stroke="#A9712F" strokeWidth="1.4" strokeLinecap="round" />
-                </svg>
-                <span style={{
-                  fontFamily: 'Roboto, sans-serif', fontWeight: 400,
-                  fontSize: '16px', lineHeight: '19px', color: '#A9712F',
-                }}>{dish.time}</span>
-              </div>
+              {/* Frame 102: clock icon + time — food only */}
+              {!isDrink && (
+                <div style={{
+                  display: 'flex', flexDirection: 'row',
+                  alignItems: 'center', gap: '3px',
+                }}>
+                  <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+                    <circle cx="8" cy="8" r="6" stroke="#A9712F" strokeWidth="1.4" />
+                    <path d="M8 5V8.5L10.5 10" stroke="#A9712F" strokeWidth="1.4" strokeLinecap="round" />
+                  </svg>
+                  <span style={{
+                    fontFamily: 'Roboto, sans-serif', fontWeight: 400,
+                    fontSize: '16px', lineHeight: '19px', color: '#A9712F',
+                  }}>{dish.time}</span>
+                </div>
+              )}
             </div>
           </div>
         </div>
@@ -248,7 +250,7 @@ const DishDetailModal = ({ isOpen, onClose, dish }: DishDetailModalProps) => {
               }}>Description</span>
             </div>
             <p style={{
-              fontFamily: 'Inter, sans-serif', fontWeight: 400,
+              fontFamily: isDrink ? 'Roboto, sans-serif' : 'Inter, sans-serif', fontWeight: 400,
               fontSize: '12px', lineHeight: '18px',
               textAlign: 'justify', color: '#555555',
               margin: 0, width: '213px',
@@ -298,10 +300,10 @@ const DishDetailModal = ({ isOpen, onClose, dish }: DishDetailModalProps) => {
                       position: 'absolute', left: 0, top: 0,
                       width: '35px', height: '35px', borderRadius: '50%',
                       background: '#FFFFFF',
-                      border: '0.6px solid rgba(22,43,57,0.5)',
+                      border: isDrink ? '0.6px solid rgba(208,138,60,0.5)' : '0.6px solid rgba(22,43,57,0.5)',
                       overflow: 'hidden',
                     }}>
-                      {/* Ellipse 11: inner food image 30.25×30.25 */}
+                      {/* Ellipse 11: inner image 30.25×30.25 */}
                       <img
                         src={addon.image} alt={addon.name}
                         style={{
@@ -328,7 +330,7 @@ const DishDetailModal = ({ isOpen, onClose, dish }: DishDetailModalProps) => {
                     <span style={{
                       fontFamily: 'Roboto, sans-serif', fontWeight: 400,
                       fontSize: '12px', lineHeight: '18px',
-                      color: 'rgba(22,43,57,0.8)',
+                      color: isDrink ? 'rgba(208,138,60,0.8)' : 'rgba(22,43,57,0.8)',
                     }}>+₹{addon.price}</span>
                   </div>
                 </div>
@@ -371,7 +373,7 @@ const DishDetailModal = ({ isOpen, onClose, dish }: DishDetailModalProps) => {
                   fontSize: '12px', lineHeight: '18px',
                   letterSpacing: '0.02em', textAlign: 'justify',
                   color: '#555555', width: '213px',
-                }}>{ing}</span>
+                }}>• {ing}</span>
               ))}
             </div>
           </div>

@@ -126,6 +126,7 @@ export default function DrinksScreen({ onNavigateToSpecials, onNavigateToFood }:
           isOpen={!!selectedDrink}
           onClose={() => setSelectedDrink(null)}
           dish={selectedDrink}
+          type="drink"
         />
       )}
 
@@ -575,7 +576,7 @@ export default function DrinksScreen({ onNavigateToSpecials, onNavigateToFood }:
         onClick={() => setIsCategoriesModalOpen(true)}
         style={{
           position: 'fixed', bottom: '24px', right: '16px',
-          width: '85px', height: '85px', borderRadius: '50%',
+          width: '70px', height: '70px', borderRadius: '50%',
           background: 'linear-gradient(180deg, #F0A450 0%, #CF8838 88.47%)',
           border: '1px solid rgba(240,164,80,0.8)',
           boxShadow: '2px 2px 4px rgba(199,106,58,0.4)',

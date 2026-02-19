@@ -473,8 +473,8 @@ export default function MenuScreen({ onNavigateToSpecials }: MenuScreenProps) {
           gap: '0px',
           padding: '0px',
         }}>
-          <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', padding: 0, width: '45px', height: '48px', justifyContent: 'center', gap: '0px' }}>
-            <UtensilsCrossed style={{ width: '30px', height: '30px', color: '#FFFFFF' }} />
+          <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', padding: 0, width: '25px', height: '30px', justifyContent: 'center', gap: '0px' }}>
+            <UtensilsCrossed style={{ width: '20px', height: '20px', color: '#FFFFFF' }} />
             <span style={{
               fontFamily: 'Inter, sans-serif',
               fontWeight: 500,
@@ -482,7 +482,7 @@ export default function MenuScreen({ onNavigateToSpecials }: MenuScreenProps) {
               lineHeight: '18px',
               textAlign: 'center',
               color: '#FFFFFF',
-              width: '45px',
+              width: '30px',
             }}>Menu</span>
           </div>
         </button>
